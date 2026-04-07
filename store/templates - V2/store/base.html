@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EVIBE</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="flex justify-between items-center px-12 py-6 bg-white shadow-sm">
+        <div class="text-xl font-light tracking-[0.3em]">
+            EVIBE
+        </div>
+
+        <div class="space-x-10 text-lg font-medium">
+            <a href="/" class="hover:text-gray-500 transition">Home</a>
+            <a href="/products/" class="hover:text-gray-500 transition">Shop</a>
+            <a href="/cart/" class="hover:text-gray-500 transition">Cart</a>
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- FOOTER -->
+    <footer class="text-center py-10 bg-black text-white mt-20">
+        <p>©️ 2026 EVIBE. Crafted with confidence.</p>
+    </footer>
+
+</body>
+</html>

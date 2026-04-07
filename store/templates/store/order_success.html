@@ -1,0 +1,16 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+
+<script>
+gtag('event', 'purchase', {
+  transaction_id: "{{ order.id }}",
+  value: {{ order.total_amount }},
+  currency: "INR"
+});
+</script>
+
+<h2>Order placed successfully 🎉</h2>
+<a href="/">Back to Home</a>
+
+{% endblock %}

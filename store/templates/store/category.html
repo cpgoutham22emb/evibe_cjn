@@ -1,0 +1,91 @@
+{% extends "store/base.html" %}
+{% block content %}
+
+<div class="max-w-6xl mx-auto py-12">
+
+    <h2 class="text-3xl font-bold mb-8 capitalize">
+        {{ category.name }} Collection
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        {% for product in products %}
+
+        <div class="border rounded-xl p-4 shadow hover:shadow-lg transition">
+
+            <a href="{% url 'product_detail' product.slug %}">
+
+                {% if product.images.first %}
+                <div class="relative">
+                    <!-- SALE 
+                    {% if product.is_offer_active %}
+                        <span class="absolute top-3 left-3 bg-black text-white text-xs px-3 py-1 tracking-wider z-10">
+                            SALE
+                        </span>
+                    {% endif %}
+                    -->
+                    {% if product.is_offer_active %}
+                        <span class="absolute top-3 left-3 bg-black text-white text-xs px-3 py-1 tracking-wider z-10">
+                            -{{ product.get_discount_percentage }}%
+                        </span>
+                    {% endif %}
+                    <!-- BEST SELLER -->
+                    {% if product.is_best_seller %}
+                        <span class="absolute top-3 right-3 bg-white text-black text-xs px-3 py-1 tracking-wider z-10 shadow">
+                            BEST SELLER
+                        </span>
+                    {% endif %}
+                
+                    <!-- NEW -->
+                    {% if product.is_new_arrival %}
+                        <span class="absolute bottom-3 left-3 bg-[#6B7A46] text-white text-xs px-3 py-1 tracking-wider z-10">
+                            NEW
+                        </span>
+                    {% endif %}
+                    <picture>
+                        <source media="(max-width: 600px)"
+                                srcset="{{ product.images.first.optimized.400|default:product.images.first.original_image.url }}">
+                
+                        <source media="(max-width: 1024px)"
+                                srcset="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}">
+                        <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
+                             loading="lazy"
+                             decoding="async"
+                             class="w-full h-auto object-cover rounded-lg mb-4">
+                    </picture>
+                </div>
+                {% endif %}
+
+                <h3 class="text-lg font-semibold">
+                    {{ product.name }}
+                </h3>
+
+            </a>
+
+            {% if product.get_final_price != product.price %}
+                <p class="text-red-600 font-semibold">
+                    ₹ {{ product.get_final_price }}
+                </p>
+                <p class="line-through text-gray-400 text-sm">
+                    ₹ {{ product.price }}
+                </p>
+            {% else %}
+                <p>
+                    ₹ {{ product.price }}
+                </p>
+            {% endif %}
+
+            <a href="{% url 'product_detail' product.slug %}"
+               class="inline-block mt-4 bg-[#6B7A46] text-white px-6 py-2 hover:bg-[#556136] transition">
+               View Product
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

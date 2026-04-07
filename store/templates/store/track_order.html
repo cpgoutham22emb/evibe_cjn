@@ -1,0 +1,94 @@
+{% extends "store/base.html" %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto py-16 px-6">
+
+<h1 class="text-3xl font-semibold mb-10">
+Track Order
+</h1>
+
+<div class="flex justify-between items-center mb-10">
+
+<div class="text-center">
+<div class="{% if order.status != 'CREATED' %}text-green-600{% endif %}">
+●
+</div>
+<p class="text-sm">Order Placed</p>
+</div>
+
+<div class="text-center">
+<div class="{% if order.status == 'PROCESSING' or order.status == 'PACKED' or order.status == 'SHIPPED' or order.status == 'DELIVERED' %}text-green-600{% endif %}">
+●
+</div>
+<p class="text-sm">Processing</p>
+</div>
+
+<div class="text-center">
+<div class="{% if order.status == 'SHIPPED' or order.status == 'DELIVERED' %}text-green-600{% endif %}">
+●
+</div>
+<p class="text-sm">Shipped</p>
+</div>
+
+<div class="text-center">
+<div class="{% if order.status == 'OUT_FOR_DELIVERY' or order.status == 'DELIVERED' %}text-green-600{% endif %}">
+●
+</div>
+<p class="text-sm">Out for delivery</p>
+</div>
+
+<div class="text-center">
+<div class="{% if order.status == 'DELIVERED' %}text-green-600{% endif %}">
+●
+</div>
+<p class="text-sm">Delivered</p>
+</div>
+
+</div>
+
+<div class="border rounded-xl p-8 bg-gray-50">
+
+<p class="text-lg font-semibold mb-4">
+ORDER #{{ order.id }}
+</p>
+
+<p class="mb-2">
+Status: 
+<span class="font-medium">
+{{ order.status }}
+</span>
+</p>
+
+<p class="mb-2">
+Total Amount: ₹{{ order.total_amount }}
+</p>
+
+<p class="mb-2">
+Ordered On: {{ order.created_at }}
+</p>
+
+{% if order.courier_name %}
+<p class="mt-4">
+Courier: {{ order.courier_name }}
+</p>
+{% endif %}
+
+{% if order.awb_code %}
+<p class="mb-4">
+Tracking ID: {{ order.awb_code }}
+</p>
+{% endif %}
+
+{% if order.awb_code %}
+<a target="_blank"
+   href="https://www.google.com/search?q={{ order.courier_name }}+tracking+{{ order.awb_code }}"
+   class="bg-black text-white px-6 py-3 inline-block mt-4">
+Track Shipment
+</a>
+{% endif %}
+
+</div>
+
+</div>
+
+{% endblock %}

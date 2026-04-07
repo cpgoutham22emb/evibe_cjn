@@ -1,0 +1,181 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>EVIBE</title>
+    
+	<!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T4S5BJV5JF"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    
+    gtag('config', 'G-T4S5BJV5JF');
+    </script>
+    
+	<script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+
+<script>
+const endDate = new Date("March 10, 2026 23:59:59").getTime();
+
+const timer = setInterval(function() {
+    const now = new Date().getTime();
+    const distance = endDate - now;
+
+    if (distance < 0) {
+        clearInterval(timer);
+        document.getElementById("countdown").innerHTML = "EXPIRED";
+        return;
+    }
+
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById("countdown").innerHTML =
+        hours + "h " + minutes + "m " + seconds + "s ";
+}, 1000);
+</script>
+
+<body>
+
+   <!-- HEADER WRAPPER -->
+   <div class="fixed top-0 left-0 w-full z-50">
+
+    <!-- ANNOUNCEMENT BAR -->
+    <div class="bg-black text-white py-3 text-sm tracking-wide overflow-hidden">
+    
+        <div id="announcement-slider" class="flex justify-center items-center">
+    
+            <p class="announcement-item">
+                🔥 Upto 50% OFF – Ends In 
+                <span id="countdown" class="font-semibold"></span>
+            </p>
+    
+            <p class="announcement-item hidden">
+                🚚 Free Shipping on Orders Above ₹999
+            </p>
+    
+            <p class="announcement-item hidden">
+                ↩ Easy Returns within 7 Days
+            </p>
+    
+        </div>
+    
+    </div>
+    <!-- NAVBAR -->
+     <nav id="navbar"
+          class="flex justify-between items-center 
+                 px-16 py-6 
+                 bg-white text-black shadow-sm 
+                 transition-all duration-500">
+     
+         <div class="text-xl font-light tracking-[0.3em]">
+             EVIBE
+         </div>
+     
+         <div class="flex items-center space-x-10 text-sm tracking-widest">
+             <a href="/" class="hover:opacity-70 transition">HOME</a>
+         
+            <!-- SHOP DROPDOWN -->
+            <div class="relative inline-block">
+            
+                <!-- SHOP button -->
+                <button id="shopButton" class="hover:opacity-70 transition">
+                    SHOP ▾
+                </button>
+            
+                <!-- Dropdown -->
+                <div id="shopDropdown"
+                     class="absolute left-0 mt-3 w-40 bg-white shadow-lg rounded-md hidden">
+            
+                    <a href="{% url 'category_products' 'formal' %}"
+                       class="block px-4 py-3 text-sm hover:bg-gray-100">
+                       Formal
+                    </a>
+            
+                    <a href="{% url 'category_products' 'cargo' %}"
+                       class="block px-4 py-3 text-sm hover:bg-gray-100">
+                       Cargo
+                    </a>
+            
+                    <a href="{% url 'category_products' 'denim' %}"
+                       class="block px-4 py-3 text-sm hover:bg-gray-100">
+                       Denim
+                    </a>
+            
+                </div>
+            
+            </div>
+         
+             <a href="/cart/" class="relative flex items-center hover:opacity-70 transition">
+             
+                 🛒
+             
+                 {% if cart_item_count > 0 %}
+                 <span class="absolute -top-2 -right-2 bg-black text-white text-xs px-1.5 py-0.5 rounded-full">
+                     {{ cart_item_count }}
+                 </span>
+                 {% endif %}
+             
+             </a>
+             <a href="/my-orders/" class="hover:text-gray-500 transition">ORDERS</a>
+         </div>
+
+
+     
+     </nav>
+    </div>
+    {% block content %}
+    {% endblock %}
+
+    <!-- FOOTER -->
+    <footer class="text-center py-10 bg-black text-white mt-20">
+        <p>©️ 2026 EVIBE. Crafted with confidence.</p>
+    </footer>
+
+</body>
+<script>
+
+    const items = document.querySelectorAll(".announcement-item");
+    let index = 0;
+    
+    setInterval(() => {
+    
+        items[index].classList.add("hidden");
+    
+        index = (index + 1) % items.length;
+    
+        items[index].classList.remove("hidden");
+    
+    }, 4000);
+        const navbar = document.getElementById("navbar");
+        
+        window.addEventListener("scroll", function () {
+        
+            if (window.scrollY > 50) {
+                navbar.classList.add("shadow-md");
+            } else {
+                navbar.classList.remove("shadow-md");
+            }
+        
+        });
+
+    const shopBtn = document.getElementById("shopButton");
+    const dropdown = document.getElementById("shopDropdown");
+    
+    shopBtn.addEventListener("click", function(event){
+        event.stopPropagation();
+        dropdown.classList.toggle("hidden");
+    });
+    
+    document.addEventListener("click", function(){
+        dropdown.classList.add("hidden");
+    });
+</script>
+</html>

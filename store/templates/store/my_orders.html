@@ -1,0 +1,56 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto py-16 px-6">
+
+<h1 class="text-3xl font-semibold mb-8">
+My Orders
+</h1>
+
+<form method="post" class="mb-10">
+{% csrf_token %}
+
+<input type="text"
+       name="phone"
+       placeholder="Enter your phone number"
+       class="border px-4 py-3 w-full mb-4">
+
+<button class="bg-black text-white px-6 py-3">
+Search Orders
+</button>
+
+</form>
+
+{% if orders %}
+
+{% for order in orders %}
+
+<div class="border rounded-lg p-6 mb-6">
+
+<p class="font-semibold">
+Order #{{ order.id }}
+</p>
+
+<p class="text-gray-500">
+Status: {{ order.status }}
+</p>
+
+<p>
+Total: ₹{{ order.total_amount }}
+</p>
+
+<a href="{% url 'track_order' order.id %}"
+   class="text-blue-600 mt-2 inline-block">
+Track Order
+</a>
+
+</div>
+
+{% endfor %}
+
+{% endif %}
+
+</div>
+
+{% endblock %}

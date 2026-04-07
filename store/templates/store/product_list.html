@@ -1,0 +1,221 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+
+<section class="relative h-screen flex items-center justify-center bg-[#f8f8f8] pt-24">
+
+    <div class="text-center max-w-4xl px-6">
+
+        <p class="text-xs tracking-[0.4em] text-gray-500 mb-6">
+            NEW SEASON
+        </p>
+
+        <h1 class="text-5xl md:text-7xl font-extralight leading-tight tracking-tight text-black">
+            Built For <br> Everyday Confidence
+        </h1>
+
+        <p class="mt-8 text-gray-500 text-lg font-light">
+            Refined essentials crafted for the modern lifestyle.
+        </p>
+
+        <a href="/products/"
+           class="inline-block mt-10 px-10 py-4 border border-black text-sm tracking-widest 
+                  hover:bg-black hover:text-white transition duration-300">
+            SHOP COLLECTION
+        </a>
+
+    </div>
+
+</section>
+
+<section class="py-28">
+    <div class="max-w-7xl mx-auto px-6">
+
+        <h2 class="text-4xl font-light text-center tracking-wide mb-16">
+            Shop By Category
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <!-- Denim -->
+            <a href="{% url 'category_products' 'denim' %}" 
+               class="relative group overflow-hidden">
+
+                <img src="/media/banners/Evibe_11226_Denim_Dark_Blue_8_800.webp"
+                     class="w-full h-[500px] object-cover group-hover:scale-105 transition duration-700">
+
+                <div class="absolute inset-0 bg-black/30"></div>
+
+                <div class="absolute bottom-10 left-10 text-white">
+                    <h3 class="text-3xl font-light tracking-wide">Denim</h3>
+                </div>
+
+            </a>
+
+            <!-- Cargo -->
+            <a href="{% url 'category_products' 'cargo' %}" 
+               class="relative group overflow-hidden">
+
+                <img src="/media/banners/Evibe_21124_Trouser_Green_1_800.webp"
+                     class="w-full h-[500px] object-cover group-hover:scale-105 transition duration-700">
+
+                <div class="absolute inset-0 bg-black/30"></div>
+
+                <div class="absolute bottom-10 left-10 text-white">
+                    <h3 class="text-3xl font-light tracking-wide">Cargo</h3>
+                </div>
+
+            </a>
+
+            <!-- Formal -->
+            <a href="{% url 'category_products' 'formal' %}" 
+               class="relative group overflow-hidden">
+
+                <img src="/media/banners/Evibe_66607_Formal_Silver_2_800.webp"
+                     class="w-full h-[500px] object-cover group-hover:scale-105 transition duration-700">
+
+                <div class="absolute inset-0 bg-black/30"></div>
+
+                <div class="absolute bottom-10 left-10 text-white">
+                    <h3 class="text-3xl font-light tracking-wide">Formal</h3>
+                </div>
+
+            </a>
+
+        </div>
+    </div>
+</section>
+
+
+{% if featured_products %}
+<section class="px-12 py-24 bg-[#f8f8f8]">
+    <div class="max-w-7xl mx-auto">
+
+        <h2 class="text-4xl font-light text-center tracking-wide mb-16">
+            Featured Collection
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16">
+
+            {% for product in featured_products %}
+            <div class="group relative">
+
+                <a href="{% url 'product_detail' product.slug %}">
+                    
+                    <div class="relative overflow-hidden">
+
+                        {% if product.is_offer_active %}
+                            <span class="absolute top-3 left-3 bg-black text-white text-xs px-3 py-1 z-10">
+                                -{{ product.get_discount_percentage }}%
+                            </span>
+                        {% endif %}
+
+                        <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
+                             class="w-full h-[450px] object-cover transition duration-700 group-hover:scale-105">
+
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <h3 class="text-lg font-medium tracking-wide">
+                            {{ product.name }}
+                        </h3>
+
+                        {% if product.is_offer_active %}
+                            <p class="text-red-600 font-semibold">
+                                ₹ {{ product.get_final_price }}
+                            </p>
+                            <p class="line-through text-gray-400 text-sm">
+                                ₹ {{ product.price }}
+                            </p>
+                        {% else %}
+                            <p>
+                                ₹ {{ product.price }}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                </a>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+<!-- Your Product Grid Section -->
+<section class="px-12 pb-32">
+    <div class="max-w-7xl mx-auto">
+
+        <h2 class="text-4xl font-light text-center tracking-wide mb-20">
+            Premium Collection
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-20">
+        
+            {% for product in products %}
+            
+            <div class="group">
+            
+                {% if product.images.first %}
+                <a href="{% url 'product_detail' product.slug %}">
+                    
+                <div class="relative overflow-hidden">
+                
+                    <!-- SALE -->
+                    {% if product.is_offer_active %}
+                        <span class="absolute top-3 left-3 bg-black text-white text-xs px-3 py-1 tracking-wider z-10">
+                            SALE
+                        </span>
+                    {% endif %}
+                
+                    <!-- BEST SELLER -->
+                    {% if product.is_best_seller %}
+                        <span class="absolute top-3 right-3 bg-white text-black text-xs px-3 py-1 tracking-wider z-10 shadow">
+                            BEST SELLER
+                        </span>
+                    {% endif %}
+                
+                    <!-- NEW -->
+                    {% if product.is_new_arrival %}
+                        <span class="absolute bottom-3 left-3 bg-[#6B7A46] text-white text-xs px-3 py-1 tracking-wider z-10">
+                            NEW
+                        </span>
+                    {% endif %}
+                
+                    <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
+                         class="w-full h-[500px] object-cover transition duration-700 group-hover:scale-105">
+                </div>
+                </a>
+                {% endif %}
+            
+                <div class="mt-6 text-center space-y-2">
+                    <h3 class="text-lg tracking-wide font-medium">
+                        {{ product.name }}
+                    </h3>
+                
+                    {% if product.get_final_price != product.price %}
+                        <p class="text-red-600 font-semibold">
+                            ₹ {{ product.get_final_price }}
+                        </p>
+                        <p class="line-through text-gray-400 text-sm">
+                            ₹ {{ product.price }}
+                        </p>
+                    {% else %}
+                        <p>
+                            ₹ {{ product.price }}
+                        </p>
+                    {% endif %}
+                </div>
+
+        </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

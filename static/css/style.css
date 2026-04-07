@@ -1,0 +1,14 @@
+:root {
+    --primary: #1e1e1e;
+    --accent: #b08d57;      /* earthy gold */
+    --bg: #f5f1eb;          /* light beige */
+    --card: #ffffff;
+    --text: #333;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+}

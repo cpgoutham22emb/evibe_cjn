@@ -1,0 +1,113 @@
+import csv
+import os
+from decimal import Decimal
+from django.core.management.base import BaseCommand
+from django.conf import settings
+from store.models import Product, ProductVariant, ProductImage, Category
+
+
+class Command(BaseCommand):
+    help = "Import products, variants and link images"
+
+    def handle(self, *args, **kwargs):
+
+        # ----------------------------
+        # 1️⃣ IMPORT PRODUCTS
+        # ----------------------------
+        with open('products.csv', newline='', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+
+            for row in reader:
+
+                # 🔹 Handle Category (ForeignKey)
+                category_name = row.get('category', '').strip().lower()
+                category_obj = None
+
+                if category_name:
+                    category_obj, _ = Category.objects.get_or_create(
+                        name=category_name
+                    )
+
+                # 🔹 Create or Update Product safely
+                product, created = Product.objects.update_or_create(
+                    product_code=row['product_code'],
+                    defaults={
+                        'name': row['name'],
+                        'category': category_obj,
+                        'cost_price': Decimal(row['cost_price']),
+                        'mrp': Decimal(row['mrp']),
+                        'price': Decimal(row['price']),
+                        'active': row['active'].strip().lower() == 'true'
+                    }
+                )
+
+                if created:
+                    self.stdout.write(self.style.SUCCESS(
+                        f"Created Product: {product.product_code}"
+                    ))
+                else:
+                    self.stdout.write(
+                        f"Updated Product: {product.product_code}"
+                    )
+
+        # ----------------------------
+        # 2️⃣ IMPORT VARIANTS
+        # ----------------------------
+        with open('variants.csv', newline='', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+
+            for row in reader:
+                try:
+                    product = Product.objects.get(
+                        product_code=row['product_code']
+                    )
+
+                    # Prevent duplicate variants
+                    ProductVariant.objects.update_or_create(
+                        product=product,
+                        size=row['size'],
+                        defaults={
+                            'stock': int(row['stock'])
+                        }
+                    )
+
+                    self.stdout.write(self.style.SUCCESS(
+                        f"Variant {row['size']} synced for {product.product_code}"
+                    ))
+
+                except Product.DoesNotExist:
+                    self.stdout.write(self.style.ERROR(
+                        f"Product not found: {row['product_code']}"
+                    ))
+
+        # ----------------------------
+        # LINK IMAGES
+        # ----------------------------
+        
+        products = Product.objects.all()
+        
+        for product in products:
+        
+            original_folder = os.path.join(
+                settings.MEDIA_ROOT,
+                "products",
+                product.product_code,
+                "original"
+            )
+        
+            if os.path.exists(original_folder):
+        
+                for filename in os.listdir(original_folder):
+        
+                    if filename.lower().endswith((".jpg", ".jpeg", ".png")):
+        
+                        image_path = f"products/{product.product_code}/original/{filename}"
+        
+                        ProductImage.objects.get_or_create(
+                            product=product,
+                            original_image=image_path
+                        )
+        
+                self.stdout.write(self.style.SUCCESS(
+                    f"Images synced for {product.product_code}"
+                ))
