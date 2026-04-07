@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -131,9 +134,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Razorpay settings
-RAZORPAY_KEY_ID = 'rzp_test_SHbCfUI8WHt7gJ'
-RAZORPAY_KEY_SECRET = 'dnvNKbNNvG7RVgPrO30pKfwx'
-RAZORPAY_WEBHOOK_SECRET = "your_webhook_secret_here"
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
+RAZORPAY_WEBHOOK_SECRET = os.environ.get("RAZORPAY_WEBHOOK_SECRET")
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
@@ -142,12 +145,12 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = "cpgoutham22@gmail.com"
-EMAIL_HOST_PASSWORD = "dhxr ctbs ygwt byij"
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
 DEFAULT_FROM_EMAIL = "EVIBE <cpgoutham22@gmail.com>"
 
 SHIPROCKET_EMAIL = "cpgoutham12@gmail.com"
-SHIPROCKET_PASSWORD = "MethuAmbi@3103"
+SHIPROCKET_PASSWORD = os.environ.get("SHIPROCKET_PASSWORD")
 
 import os
 print("RUNSERVER USING DB:", os.path.abspath(DATABASES['default']['NAME']))
