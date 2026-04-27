@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.template.response import TemplateResponse
-from django.db.models import Count
 
 from apps.store.services.analytics_service import (
     get_revenue_today,
@@ -13,40 +12,12 @@ from apps.store.services.analytics_service import (
     get_low_stock_products,
     get_orders_trend,
     get_order_status_distribution,
-    get_revenue_trend
+    get_revenue_trend,
+    get_product_views_trend
 )
 
-from apps.analytics.models import AnalyticsDashboard, ProductView
+from apps.analytics.models import AnalyticsDashboard
 
-
-# ----------------------------------
-# PRODUCT VIEW SUMMARY (AGGREGATED)
-# ----------------------------------
-class ProductViewSummaryAdmin(admin.ModelAdmin):
-
-    change_list_template = "admin/product_view_summary.html"
-
-    def changelist_view(self, request, extra_context=None):
-
-        data = (
-            ProductView.objects
-            .values("product__id", "product__name")
-            .annotate(total_views=Count("id"))
-            .order_by("-total_views")
-        )
-
-        context = {
-            "summary_data": data
-        }
-
-        return TemplateResponse(
-            request,
-            "admin/product_view_summary.html",
-            context
-        )
-
-
-admin.site.register(ProductView, ProductViewSummaryAdmin)
 
 
 # ----------------------------------
@@ -63,6 +34,8 @@ class AnalyticsAdmin(admin.ModelAdmin):
         labels, values = get_orders_trend(days)
         status_labels, status_values = get_order_status_distribution()
         revenue_labels, revenue_values = get_revenue_trend(days)
+        
+        view_labels, view_values = get_product_views_trend(days)
 
         context = {
             "revenue_today": get_revenue_today(),
@@ -80,6 +53,8 @@ class AnalyticsAdmin(admin.ModelAdmin):
             "status_values": status_values,
             "revenue_labels": revenue_labels,
             "revenue_values": revenue_values,
+            "view_labels": view_labels,
+            "view_values": view_values,
             "days": days
         }
 

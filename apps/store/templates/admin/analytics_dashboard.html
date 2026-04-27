@@ -201,4 +201,49 @@ new Chart(document.getElementById('statusChart'), {
 });
 </script>
 
+<h2>Product Views Trend</h2>
+
+<div style="background:white;padding:20px;border-radius:10px;">
+    <canvas id="viewsChart" height="100"></canvas>
+</div>
+
+{{ view_labels|json_script:"view-labels" }}
+{{ view_values|json_script:"view-values" }}
+
+<script>
+const viewLabels = JSON.parse(document.getElementById('view-labels').textContent);
+const viewValues = JSON.parse(document.getElementById('view-values').textContent);
+
+const viewsCtx = document.getElementById('viewsChart').getContext('2d');
+
+new Chart(viewsCtx, {
+    type: 'line',
+    data: {
+        labels: viewLabels,
+        datasets: [{
+            label: 'Product Views',
+            data: viewValues,
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37,99,235,0.15)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.35
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+
 {% endblock %}

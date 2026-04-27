@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from apps.store.models import Product, Category
 from apps.analytics.models import ProductView
+from django.http import HttpRequest
 
 def product_list(request):
 
@@ -24,19 +25,38 @@ def product_list(request):
         "best_sellers": best_sellers,
     })
 
+def get_user_city(request):
+    """
+    Basic city detection for now.
+    Later we can improve using IP-based geo lookup.
+    """
+
+    forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+
+    if forwarded_for:
+        ip = forwarded_for.split(",")[0]
+    else:
+        ip = request.META.get("REMOTE_ADDR")
+
+    # Localhost testing fallback
+    if ip in ["127.0.0.1", "localhost", None]:
+        return "Bangalore"
+
+    # Temporary fallback
+    return "Unknown"
 
 def product_detail(request, slug):
 
     product = get_object_or_404(Product, slug=slug)
 
-    # SESSION BASED TRACKING
     session_id = request.session.session_key
 
     if not session_id:
         request.session.create()
         session_id = request.session.session_key
 
-    # CHECK IF ALREADY VIEWED
+    city = get_user_city(request)
+
     already_viewed = ProductView.objects.filter(
         product=product,
         session_id=session_id
@@ -45,13 +65,13 @@ def product_detail(request, slug):
     if not already_viewed:
         ProductView.objects.create(
             product=product,
-            session_id=session_id
+            session_id=session_id,
+            city=city
         )
 
     return render(request, "store/product_detail.html", {
         "product": product
     })
-
 
 def category_products(request, slug):
 
