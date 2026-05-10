@@ -7,6 +7,7 @@ from apps.analytics.models import ProductView
 
 
 
+
 def get_revenue_today():
     today = timezone.now().date()
 
@@ -344,6 +345,207 @@ def get_abandoned_checkouts():
             "products": product_names,
             "status": order.status,
             "created_at": order.created_at
+        })
+
+    return final_data
+
+
+def get_dead_products():
+    """
+    Dead Products Report
+
+    Rule:
+    Product age >= 30 days
+    Views < 20
+    Orders < 3
+    """
+
+    from apps.store.models import Product, OrderItem
+
+    cutoff_date = timezone.now() - timedelta(days=30)
+
+    # Only products older than 30 days
+    old_products = Product.objects.filter(
+        created_at__lte=cutoff_date
+    )
+
+    # Views grouped
+    view_data = (
+        ProductView.objects
+        .filter(product__in=old_products)
+        .values("product__id", "product__name")
+        .annotate(total_views=Count("id"))
+    )
+
+    # Orders grouped
+    order_data = (
+        OrderItem.objects
+        .filter(product__in=old_products)
+        .values("product__id")
+        .annotate(total_orders=Sum("quantity"))
+    )
+
+    order_map = {
+        item["product__id"]: item["total_orders"]
+        for item in order_data
+    }
+
+    final_data = []
+
+    for item in view_data:
+        product_id = item["product__id"]
+        total_views = item["total_views"]
+        total_orders = order_map.get(product_id, 0)
+
+        if total_views < 20 and total_orders < 3:
+            final_data.append({
+                "product_name": item["product__name"],
+                "total_views": total_views,
+                "total_orders": total_orders
+            })
+
+    final_data.sort(
+        key=lambda x: (x["total_orders"], x["total_views"])
+    )
+
+    return final_data
+
+
+
+def get_city_wise_revenue_intelligence(days=30):
+    """
+    City + Product Revenue Intelligence
+
+    Metrics:
+    - Views
+    - Orders
+    - Conversion %
+    - Payment Drop-Offs
+
+    Grouped by:
+    City -> Product
+    """
+
+    from apps.store.models import OrderItem
+
+    # Time filter
+    if days == "all":
+        view_queryset = ProductView.objects.all()
+        order_queryset = Order.objects.all()
+    else:
+        cutoff_date = timezone.now() - timedelta(days=int(days))
+
+        view_queryset = ProductView.objects.filter(
+            created_at__gte=cutoff_date
+        )
+
+        order_queryset = Order.objects.filter(
+            created_at__gte=cutoff_date
+        )
+
+    # Product views grouped by city + product
+    view_data = (
+        view_queryset
+        .values(
+            "city",
+            "product__id",
+            "product__name"
+        )
+        .annotate(total_views=Count("id"))
+    )
+
+    # Orders grouped by city + product
+    order_data = (
+        OrderItem.objects
+        .filter(
+            order__in=order_queryset
+        )
+        .values(
+            "order__city",
+            "product__id"
+        )
+        .annotate(total_orders=Sum("quantity"))
+    )
+
+    # Payment drop-offs
+    dropoff_data = (
+        order_queryset
+        .filter(
+            payment_method="ONLINE",
+            status="CREATED"
+        )
+        .values(
+            "city",
+            "items__product__id"
+        )
+        .annotate(total_dropoffs=Count("id"))
+    )
+
+    order_map = {
+        (
+            item["order__city"],
+            item["product__id"]
+        ): item["total_orders"]
+        for item in order_data
+    }
+
+    dropoff_map = {
+        (
+            item["city"],
+            item["items__product__id"]
+        ): item["total_dropoffs"]
+        for item in dropoff_data
+    }
+
+    final_data = {}
+
+    for item in view_data:
+        city = item["city"] or "Unknown"
+        product_id = item["product__id"]
+        product_name = item["product__name"]
+        total_views = item["total_views"]
+
+        total_orders = order_map.get(
+            (city, product_id),
+            0
+        )
+
+        total_dropoffs = dropoff_map.get(
+            (city, product_id),
+            0
+        )
+
+        conversion = 0
+
+        if total_views > 0:
+            conversion = round(
+                (total_orders / total_views) * 100,
+                2
+            )
+
+        # Business insight
+        if total_views >= 50 and total_dropoffs >= 10:
+            insight = "Strong interest, payment issue"
+
+        elif conversion >= 30:
+            insight = "Excellent performer"
+
+        elif total_orders <= 2:
+            insight = "Weak product"
+
+        else:
+            insight = "Needs observation"
+
+        if city not in final_data:
+            final_data[city] = []
+
+        final_data[city].append({
+            "product_name": product_name,
+            "views": total_views,
+            "orders": total_orders,
+            "conversion": conversion,
+            "dropoffs": total_dropoffs,
+            "insight": insight
         })
 
     return final_data

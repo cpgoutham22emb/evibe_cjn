@@ -1,0 +1,84 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+
+<section class="px-12 py-24">
+    <div class="max-w-7xl mx-auto">
+
+        <h2 class="text-4xl font-light text-center tracking-wide mb-16">
+            All Products
+        </h2>
+
+<div class="flex gap-4 justify-center mb-10 flex-wrap">
+
+    {% for size in available_sizes %}
+
+        <a href="?size={{ size }}"
+           class="
+           border px-4 py-2 text-sm transition duration-300
+
+           {% if selected_size == size %}
+               bg-black text-white
+           {% else %}
+               hover:bg-black hover:text-white
+           {% endif %}
+           ">
+
+            {{ size }}
+
+        </a>
+
+    {% endfor %}
+
+    {% if selected_size %}
+
+        <a href="{% url 'all_products' %}"
+           class="border px-4 py-2 text-sm bg-red-500 text-white hover:bg-red-600 transition duration-300">
+
+            Clear Filter
+
+        </a>
+
+    {% endif %}
+
+</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-20">
+
+            {% for product in products %}
+
+            <div class="group">
+
+                {% if product.images.first %}
+                <a href="{% url 'product_detail' product.slug %}">
+                    
+                    <div class="relative overflow-hidden">
+
+                        {% if product.all_products_order and product.all_products_order <= 3 %}
+                            <span class="absolute top-3 left-3 bg-black text-white text-xs px-3 py-1">
+                                TOP PICK
+                            </span>
+                        {% endif %}
+
+                        <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
+                             loading="lazy"
+                             class="w-full h-[500px] object-cover transition duration-700 group-hover:scale-105">
+                    </div>
+
+                </a>
+                {% endif %}
+
+                <div class="mt-6 text-center">
+                    <h3 class="text-lg">{{ product.name }}</h3>
+                    <p>₹ {{ product.price }}</p>
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

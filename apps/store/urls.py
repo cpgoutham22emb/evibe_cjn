@@ -1,10 +1,13 @@
 from django.urls import path
 
+from django.shortcuts import render
+
 # PRODUCT
 from .views.product_views import (
     product_list,
     product_detail,
-    category_products
+    category_products,
+    all_products
 )
 
 # CART
@@ -49,7 +52,7 @@ urlpatterns = [
     path("", product_list, name="product_list"),
     path("product/<slug:slug>/", product_detail, name="product_detail"),
     path("category/<slug:slug>/", category_products, name="category_products"),
-
+    path('products/all/', all_products, name='all_products'),
     # CART
     path("cart/", cart_detail, name="cart"),
     path("cart/add/", add_to_cart, name="add_to_cart"),
@@ -70,6 +73,36 @@ urlpatterns = [
     path("webhook/razorpay/", razorpay_webhook, name="razorpay_webhook"),
     path("courier/webhook/", courier_webhook, name="courier_webhook"),
 
+    # POLICIES
+    path(
+        "privacy-policy/",
+        lambda request: render(request, "store/privacy_policy.html"),
+        name="privacy_policy"
+    ),
+
+    path(
+        "return-policy/",
+        lambda request: render(request, "store/return_policy.html"),
+        name="return_policy"
+    ),
+
+    path(
+        "shipping-policy/",
+        lambda request: render(request, "store/shipping_policy.html"),
+        name="shipping_policy"
+    ),
+
+    path(
+        "terms-and-conditions/",
+        lambda request: render(request, "store/terms.html"),
+        name="terms"
+    ),
+
+    path(
+        "about-us/",
+        lambda request: render(request, "store/about_us.html"),
+        name="about_us"
+    ),
     # AJAX
     path("ajax/order-items/", get_order_items, name="get_order_items"),
 ]   

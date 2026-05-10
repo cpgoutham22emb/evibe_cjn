@@ -7,6 +7,41 @@
         {{ category.name }} Collection
     </h2>
 
+    <div class="flex gap-4 justify-center mb-10">
+
+            {% for size in available_sizes %}
+
+                <a href="?size={{ size }}"
+                class="
+                border px-4 py-2 text-sm transition duration-300
+
+                {% if selected_size == size %}
+                    bg-black text-white
+                {% else %}
+                    hover:bg-black hover:text-white
+                {% endif %}
+                ">
+
+                    {{ size }}
+
+                </a>
+
+            {% endfor %}
+
+            {% if selected_size %}
+
+                <a href="{% url 'category_products' category.name %}"
+                class="border px-4 py-2 text-sm bg-red-500 text-white hover:bg-red-600 transition duration-300">
+
+                    Clear Filter
+
+                </a>
+
+            {% endif %}
+
+    </div>
+
+
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
         {% for product in products %}

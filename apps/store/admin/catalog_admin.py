@@ -35,6 +35,8 @@ class ProductImageInline(admin.TabularInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
 
+    list_display_links = ("product_code",)
+    
     list_display = (
         "product_code",
         "name",
@@ -47,6 +49,7 @@ class ProductAdmin(admin.ModelAdmin):
         "featured_order",
         "is_new_arrival",
         "new_arrival_order",
+        "all_products_order",
         "active",
     )
 
@@ -57,6 +60,7 @@ class ProductAdmin(admin.ModelAdmin):
         "best_seller_order",
         "is_new_arrival",
         "new_arrival_order",
+        "all_products_order",
     )
 
     list_filter = (
@@ -85,6 +89,7 @@ class ProductAdmin(admin.ModelAdmin):
                 "is_best_seller",
                 "is_new_arrival",
                 "show_countdown",
+                "all_products_order",
                 "active",
             )
         }),

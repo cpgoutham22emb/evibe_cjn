@@ -124,6 +124,42 @@ document.addEventListener("DOMContentLoaded", function(){
                         class="inline-block bg-[#6B7A46] text-white px-8 py-3 hover:bg-[#556136] transition">
                     Add to Cart
                 </button>
+
+                <!-- ================= TRUST + DELIVERY + URGENCY ================= -->
+                <div class="mt-8 space-y-3 text-sm text-gray-700">
+
+                    <p>✔ Cash on Delivery Available</p>
+                    <p>✔ Free Shipping Above ₹999</p>
+                    <p>✔ Easy Returns within 7 Days</p>
+                    <p>✔ Secure Payments via Razorpay</p>
+
+                    <p class="mt-3 text-gray-600">
+                        🚚 Delivery in 3–5 Business Days
+                    </p>
+
+                    {% comment %} LOW STOCK LOGIC {% endcomment %}
+                    {% with min_stock=product.variants.all|dictsort:"stock"|first %}
+                        {% if min_stock.stock <= 5 %}
+                            <p class="text-red-600 font-semibold">
+                                🔥 Only Few Left — Order Soon
+                            </p>
+                        {% endif %}
+                    {% endwith %}
+
+                </div>
+
+                <!-- ================= PRODUCT DESCRIPTION ================= -->
+                <div class="mt-10 border-t pt-6">
+
+                    <h3 class="text-lg font-semibold mb-3">
+                        Product Description
+                    </h3>
+
+                    <p class="text-gray-600 leading-relaxed">
+                        {{ product.description|default:"Premium quality product designed for comfort and everyday confidence." }}
+                    </p>
+
+                </div>
             </form>
 
             <div class="mt-8">

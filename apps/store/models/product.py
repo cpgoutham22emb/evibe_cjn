@@ -19,7 +19,8 @@ class Product(models.Model):
     cost_price = models.DecimalField(max_digits=10, decimal_places=2)
     mrp = models.DecimalField(max_digits=10, decimal_places=2)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    
+    description = models.TextField(blank=True, null=True)
+
     offer_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     offer_end = models.DateTimeField(null=True, blank=True)
     
@@ -32,7 +33,8 @@ class Product(models.Model):
 
     is_new_arrival = models.BooleanField(default=False)
     new_arrival_order = models.PositiveIntegerField(null=True, blank=True)
-    
+    all_products_order = models.IntegerField(null=True, blank=True, help_text="Controls order in View All Products page")
+
     show_countdown = models.BooleanField(default=False)
 
     active = models.BooleanField(default=True)

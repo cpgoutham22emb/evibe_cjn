@@ -134,9 +134,134 @@ const timer = setInterval(function() {
     {% block content %}
     {% endblock %}
 
-    <!-- FOOTER -->
-    <footer class="text-center py-10 bg-black text-white mt-20">
-        <p>©️ 2026 EVIBE. Crafted with confidence.</p>
+    <footer class="bg-black text-white mt-24">
+
+        <div class="max-w-7xl mx-auto px-6 py-16">
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+
+                <!-- BRAND -->
+                <div>
+
+                    <h2 class="text-3xl font-light tracking-wide mb-4">
+                        EVIBE
+                    </h2>
+
+                    <p class="text-gray-400 leading-7 text-sm">
+                        Modern essentials crafted for everyday confidence.
+                    </p>
+
+                </div>
+
+                <!-- CUSTOMER CARE -->
+                <div>
+
+                    <h3 class="text-sm tracking-[0.2em] mb-5">
+                        CUSTOMER CARE
+                    </h3>
+
+                    <ul class="space-y-3 text-sm text-gray-400">
+
+                        <li>
+                            <a href="{% url 'shipping_policy' %}" class="hover:text-white transition">
+                                Shipping Policy
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'return_policy' %}" class="hover:text-white transition">
+                                Return & Refund Policy
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'privacy_policy' %}" class="hover:text-white transition">
+                                Privacy Policy
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'terms' %}" class="hover:text-white transition">
+                                Terms & Conditions
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'about_us' %}" class="hover:text-white transition">
+                                About Us
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <!-- CONNECT -->
+                <div>
+
+                    <h3 class="text-sm tracking-[0.2em] mb-5">
+                        CONNECT
+                    </h3>
+
+                    <div class="space-y-3 text-sm text-gray-400">
+
+                        <!-- INSTAGRAM -->
+                        <p>
+                            <a href="https://www.instagram.com/evibe_denim_company/"
+                            target="_blank"
+                            class="hover:text-white transition">
+
+                                Instagram
+
+                            </a>
+                        </p>
+
+                        <!-- PHONE -->
+                        <p>
+                            <a href="tel:+917259755738"
+                            class="hover:text-white transition">
+
+                                +91 72597 55738
+
+                            </a>
+                        </p>
+
+                        <!-- WHATSAPP -->
+                        <p>
+                            <a href="https://wa.me/917259755738"
+                            target="_blank"
+                            class="hover:text-white transition">
+
+                                WhatsApp Support
+
+                            </a>
+                        </p>
+
+                        <!-- EMAIL -->
+                        <p>
+                            <a href="mailto:evibedenimcompany@gmail.com"
+                            class="hover:text-white transition">
+
+                                support@evibe.com
+
+                            </a>
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- BOTTOM -->
+            <div class="border-t border-gray-800 mt-12 pt-6 text-center text-xs text-gray-500">
+
+                © 2026 EVIBE. All rights reserved.
+
+            </div>
+
+        </div>
+
     </footer>
 
 </body>

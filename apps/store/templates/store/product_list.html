@@ -2,6 +2,7 @@
 
 {% block content %}
 
+<!-- HERO SECTION -->
 <section class="relative h-screen flex items-center justify-center bg-[#f8f8f8] pt-24">
 
     <div class="text-center max-w-4xl px-6">
@@ -28,6 +29,53 @@
 
 </section>
 
+<!-- NEW ARRIVALS -->
+{% if new_arrivals %}
+<section class="px-12 py-24 bg-white">
+    <div class="max-w-7xl mx-auto">
+
+        <h2 class="text-4xl font-light text-center tracking-wide mb-16">
+            New Arrivals
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16">
+
+            {% for product in new_arrivals %}
+            <div class="group relative">
+
+                <a href="{% url 'product_detail' product.slug %}">
+
+                    <div class="relative overflow-hidden">
+
+                        <span class="absolute top-3 left-3 bg-[#6B7A46] text-white text-xs px-3 py-1 z-10">
+                            NEW
+                        </span>
+
+                        <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
+                             class="w-full h-[450px] object-cover transition duration-700 group-hover:scale-105">
+
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <h3 class="text-lg font-medium tracking-wide">
+                            {{ product.name }}
+                        </h3>
+
+                        <p>₹ {{ product.price }}</p>
+                    </div>
+
+                </a>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+<!-- CATEGORY SECTION -->
 <section class="py-28">
     <div class="max-w-7xl mx-auto px-6">
 
@@ -86,7 +134,53 @@
     </div>
 </section>
 
+<!-- BEST SELLERS -->
+{% if best_sellers %}
+<section class="px-12 py-24 bg-[#f8f8f8]">
+    <div class="max-w-7xl mx-auto">
 
+        <h2 class="text-4xl font-light text-center tracking-wide mb-16">
+            Best Sellers
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16">
+
+            {% for product in best_sellers %}
+            <div class="group relative">
+
+                <a href="{% url 'product_detail' product.slug %}">
+
+                    <div class="relative overflow-hidden">
+
+                        <span class="absolute top-3 right-3 bg-white text-black text-xs px-3 py-1 z-10 shadow">
+                            BEST SELLER
+                        </span>
+
+                        <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
+                             class="w-full h-[450px] object-cover transition duration-700 group-hover:scale-105">
+
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <h3 class="text-lg font-medium tracking-wide">
+                            {{ product.name }}
+                        </h3>
+
+                        <p>₹ {{ product.price }}</p>
+                    </div>
+
+                </a>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+<!-- FEATURED PRODUCTS -->
 {% if featured_products %}
 <section class="px-12 py-24 bg-[#f8f8f8]">
     <div class="max-w-7xl mx-auto">
@@ -145,13 +239,15 @@
 </section>
 {% endif %}
 
-<!-- Your Product Grid Section -->
+<!-- All Premium Products (NO SIDEBAR HERE) -->
 <section class="px-12 pb-32">
     <div class="max-w-7xl mx-auto">
 
         <h2 class="text-4xl font-light text-center tracking-wide mb-20">
-            Premium Collection
+            All Premium Products
         </h2>
+
+        
         <div class="grid grid-cols-1 md:grid-cols-3 gap-20">
         
             {% for product in products %}
@@ -162,22 +258,25 @@
                 <a href="{% url 'product_detail' product.slug %}">
                     
                 <div class="relative overflow-hidden">
-                
-                    <!-- SALE -->
+
+                    {% if product.all_products_order and product.all_products_order <= 3 %}
+                        <span class="absolute top-3 left-3 bg-black text-white text-xs px-3 py-1 z-10 tracking-wider">
+                            TOP PICK
+                        </span>
+                    {% endif %}
+
                     {% if product.is_offer_active %}
                         <span class="absolute top-3 left-3 bg-black text-white text-xs px-3 py-1 tracking-wider z-10">
                             SALE
                         </span>
                     {% endif %}
                 
-                    <!-- BEST SELLER -->
                     {% if product.is_best_seller %}
                         <span class="absolute top-3 right-3 bg-white text-black text-xs px-3 py-1 tracking-wider z-10 shadow">
                             BEST SELLER
                         </span>
                     {% endif %}
                 
-                    <!-- NEW -->
                     {% if product.is_new_arrival %}
                         <span class="absolute bottom-3 left-3 bg-[#6B7A46] text-white text-xs px-3 py-1 tracking-wider z-10">
                             NEW
@@ -209,9 +308,17 @@
                     {% endif %}
                 </div>
 
-        </div>
+            </div>
 
             {% endfor %}
+
+            <div class="flex justify-center mt-16">
+                <a href="{% url 'all_products' %}"
+                class="px-12 py-4 bg-black text-white text-sm tracking-widest 
+                        hover:bg-gray-800 transition duration-300 shadow-lg">
+                    VIEW ALL PRODUCTS
+                </a>
+            </div>
 
         </div>
 

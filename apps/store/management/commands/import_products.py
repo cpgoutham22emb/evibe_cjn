@@ -37,6 +37,7 @@ class Command(BaseCommand):
                         'cost_price': Decimal(row['cost_price']),
                         'mrp': Decimal(row['mrp']),
                         'price': Decimal(row['price']),
+                        'description': row.get('description', '').strip(),
                         'active': row['active'].strip().lower() == 'true'
                     }
                 )
