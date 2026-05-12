@@ -71,7 +71,7 @@ const timer = setInterval(function() {
     <!-- NAVBAR -->
      <nav id="navbar"
           class="flex justify-between items-center 
-                 px-16 py-6 
+                 px-4 md:px-16 py-4 md:py-6 
                  bg-white text-black shadow-sm 
                  transition-all duration-500">
      
@@ -79,7 +79,7 @@ const timer = setInterval(function() {
              EVIBE
          </div>
      
-         <div class="flex items-center space-x-10 text-sm tracking-widest">
+         <div class="flex items-center space-x-4 md:space-x-10 text-xs md:text-sm tracking-widest">
              <a href="/" class="hover:opacity-70 transition">HOME</a>
          
             <!-- SHOP DROPDOWN -->
@@ -130,9 +130,20 @@ const timer = setInterval(function() {
 
      
      </nav>
+     {% if messages %}
+        <div id="toast-message" class="fixed top-28 right-6 z-50">
+            {% for message in messages %}
+                <div class="bg-black text-white px-6 py-3 mb-2 text-sm shadow-lg rounded">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
     </div>
-    {% block content %}
-    {% endblock %}
+    <main class="pt-32 md:pt-28">
+        {% block content %}
+        {% endblock %}
+    </main>
 
     <footer class="bg-black text-white mt-24">
 
@@ -302,5 +313,21 @@ const timer = setInterval(function() {
     document.addEventListener("click", function(){
         dropdown.classList.add("hidden");
     });
+
+    setTimeout(() => {
+
+        const toast = document.getElementById("toast-message");
+
+        if (toast) {
+
+            toast.style.transition = "opacity 0.5s ease";
+            toast.style.opacity = "0";
+
+            setTimeout(() => {
+                toast.remove();
+            }, 500);
+        }
+
+    }, 2500);
 </script>
 </html>

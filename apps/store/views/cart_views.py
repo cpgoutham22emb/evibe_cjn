@@ -22,7 +22,8 @@ def add_to_cart(request):
         cart = Cart(request)
         cart.add(variant_id)
 
-    return redirect('cart')
+        messages.success(request, "Added to cart")
+    return redirect(request.META.get('HTTP_REFERER'))
 
 
 def remove_from_cart(request, variant_id):
