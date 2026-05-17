@@ -9,6 +9,8 @@ import razorpay
 from apps.store.models import Order, OrderItem
 from apps.store.core.cart_manager import Cart
 
+from django.utils import timezone
+from apps.customer_engagement.models import CustomerLead, RewardCoupon
 
 @require_http_methods(["GET", "POST"])
 def checkout(request):
@@ -23,15 +25,68 @@ def checkout(request):
     if request.method == "GET":
 
         subtotal = cart.get_total_price()
+
         mrp_total = cart.get_total_mrp()
 
         savings = mrp_total - subtotal
+
+        shipping_charge = 0 if subtotal > 999 else 99
+
+        reward_coupon = None
+
+        reward_discount = 0
+
+        final_total = subtotal + shipping_charge
+
+        # =========================
+        # EVIBE AUTO REWARD
+        # =========================
+
+        customer_email = request.session.get("evibe_customer_email")
+
+        if customer_email:
+
+            print("SESSION EMAIL:", customer_email)
+
+            lead = CustomerLead.objects.filter(
+                email=customer_email
+            ).first()
+
+            print("LEAD:", lead)
+
+            if lead:
+
+                coupons = RewardCoupon.objects.filter(
+                    customer=lead
+                )
+
+                print("ALL COUPONS:", coupons)
+
+                reward_coupon = RewardCoupon.objects.filter(
+                    customer=lead,
+                    is_used=False,
+                    valid_till__gte=timezone.now()
+                ).first()
+
+                print("FINAL COUPON:", reward_coupon)
+
+                if reward_coupon:
+
+                    reward_discount = (
+                        subtotal * reward_coupon.discount_percentage  
+                    ) / 100
+
+                    final_total = final_total - reward_discount
 
         return render(request, "store/checkout.html", {
             "items": items,
             "cart": cart,
             "mrp_total": mrp_total,
-            "savings": savings
+            "savings": savings,
+            "shipping_charge": shipping_charge,
+            "reward_coupon": reward_coupon,
+            "reward_discount": reward_discount,
+            "final_total": final_total
         })
 
     if request.method == "POST":
@@ -48,7 +103,41 @@ def checkout(request):
 
         shipping_charge = 0 if subtotal > 999 else 99
 
+        reward_discount = 0
+
+        reward_coupon = None
+
         total_amount = subtotal + shipping_charge
+
+        # =========================
+        # EVIBE REWARD
+        # =========================
+
+        customer_email_session = request.session.get(
+            "evibe_customer_email"
+        )
+
+        if customer_email_session:
+
+            lead = CustomerLead.objects.filter(
+                email=customer_email_session
+            ).first()
+
+            if lead:
+
+                reward_coupon = RewardCoupon.objects.filter(
+                    customer=lead,
+                    is_used=False,
+                    valid_till__gte=timezone.now()
+                ).first()
+
+                if reward_coupon:
+
+                    reward_discount = (
+                        subtotal * reward_coupon.discount_percentage
+                    ) / 100
+
+                    total_amount = total_amount - reward_discount
 
         with transaction.atomic():
 
@@ -63,7 +152,9 @@ def checkout(request):
                 status='CREATED',
                 subtotal=subtotal,
                 shipping_charge=shipping_charge,
-                total_amount=total_amount
+                total_amount=total_amount,
+                reward_discount=reward_discount,
+                reward_coupon_code=reward_coupon.coupon_code if reward_coupon else None
             )
 
             for item in items:
@@ -99,6 +190,16 @@ def checkout(request):
                 "customer_name": customer_name,
                 "phone": phone,
             })
+
+        # =========================
+        # MARK REWARD USED
+        # =========================
+
+        if reward_coupon:
+
+            reward_coupon.is_used = True
+
+            reward_coupon.save()
 
         cart.clear()
 

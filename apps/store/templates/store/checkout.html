@@ -119,6 +119,33 @@ gtag('event', 'begin_checkout', {
                 <span>Subtotal</span>
                 <span>₹ {{ cart.get_total_price }}</span>
             </div>
+
+            {% if reward_coupon %}
+
+            <div class="flex justify-between mb-3
+                        text-green-600 font-semibold">
+
+                <span>
+                    ⚡ EVIBE Reward Applied
+                </span>
+
+                <span>
+                    - ₹ {{ reward_discount }}
+                </span>
+
+            </div>
+
+            <div class="mb-4 text-xs text-green-600">
+
+                Coupon:
+                {{ reward_coupon.coupon_code }}
+
+                • Valid until
+                {{ reward_coupon.valid_till|date:"d M Y" }}
+
+            </div>
+
+            {% endif %}
             
             {% if cart.get_total_price > 999 %}
             <div class="flex justify-between mb-3 text-green-600">
@@ -135,14 +162,12 @@ gtag('event', 'begin_checkout', {
             <hr class="my-6">
             
             <div class="flex justify-between font-semibold text-xl">
-                <span>Total Payable</span>
-                
 
-                {% if cart.get_total_price > 999 %}
-                    <span>₹ {{ cart.get_total_price }}</span>
-                {% else %}
-                    <span>₹ {{ cart.get_total_price|add:99 }}</span>
-                {% endif %}
+                <span>Total Payable</span>
+
+                <span>
+                    ₹ {{ final_total }}
+                </span>
 
             </div>
             <p class="text-xs text-gray-500 mt-2">

@@ -52,11 +52,14 @@ class Order(models.Model):
     shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    # Discount fields
+    reward_discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    reward_coupon_code = models.CharField(max_length=100, blank=True, null=True)
+
     # RAZORPAY FIELDS
     razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
     razorpay_payment_id = models.CharField(max_length=100, blank=True, null=True)
     razorpay_signature = models.CharField(max_length=200, blank=True, null=True)
-    
     refund_processed = models.BooleanField(default=False)
     paid_at = models.DateTimeField(blank=True, null=True)
 
@@ -73,6 +76,7 @@ class Order(models.Model):
     tracking_url = models.URLField(blank=True, null=True)
 
     delivered_at = models.DateTimeField(blank=True, null=True)
+
 
     # RTO details
     rto_reason = models.CharField(max_length=200, blank=True, null=True)

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     'apps.store',
     'apps.analytics',
+    'apps.customer_engagement',
 ]
 
 MIDDLEWARE = [
@@ -65,6 +66,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'apps.store.context_processors.cart_item_count',
+                'apps.customer_engagement.context_processors.evibe_customer',
             ],
         },
     },
