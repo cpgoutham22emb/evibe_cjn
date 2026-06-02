@@ -44,6 +44,29 @@ def send_otp(request):
 
             })
 
+
+        existing_otp = EmailOTP.objects.filter(
+            email=email,
+            is_verified=False
+        ).order_by('-created_at').first()
+
+        if existing_otp:
+
+            seconds = (
+                timezone.now() -
+                existing_otp.created_at
+            ).seconds
+
+            if seconds < 30:
+
+                return JsonResponse({
+
+                    "success": False,
+
+                    "message":
+                    "Please wait 30 seconds before requesting another OTP."
+
+                })
         # SEND OTP
         send_email_otp(email)
 
@@ -128,6 +151,18 @@ def verify_otp(request):
             email=email
         ).first()
 
+        is_new_user = False
+
+        if not customer:
+            is_new_user = True
+
+        from .models import RewardCoupon
+
+        active_coupon = RewardCoupon.objects.filter(
+            customer=customer,
+            is_used=False
+        ).first()
+
         new_user = False
 
         # NEW CUSTOMER
@@ -171,10 +206,6 @@ def verify_otp(request):
             'evibe_customer_email' 
         ] = customer.email
 
-        if coupon:
-            request.session[
-                'reward_coupon'
-            ] = coupon.coupon_code
 
         response_data = {
 
@@ -183,6 +214,8 @@ def verify_otp(request):
             "customer_name": customer.name,
 
             "new_user": new_user,
+
+            "is_new_user": new_user,
 
             "message": "OTP verified successfully"
 
@@ -197,6 +230,17 @@ def verify_otp(request):
 
             response_data["valid_till"] = (
                 coupon.valid_till.strftime(
+                    "%d %b %Y"
+                )
+            )
+        elif active_coupon:
+
+            response_data["coupon_code"] = (
+                active_coupon.coupon_code
+            )
+
+            response_data["valid_till"] = (
+                active_coupon.valid_till.strftime(
                     "%d %b %Y"
                 )
             )
@@ -224,16 +268,10 @@ def signup_lead(request):
         })
 
     try:
-
-        data = json.loads(request.body)
-
-        name = data.get("name", "").strip()
-
-        email = data.get("email", "").strip().lower()
-
-        login_provider = data.get("login_provider")
-
-        preferred_style = data.get("preferred_style")
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        login_provider = "signup_popup"
+        preferred_style = request.POST.get("preferred_style","")
 
         # EMAIL VALIDATION
         if not re.match(EMAIL_REGEX, email):
@@ -273,8 +311,12 @@ def signup_lead(request):
         # CREATE COUPON
         coupon = create_signup_coupon(customer)
 
-        # STORE IN SESSION
-        request.session['reward_coupon'] = coupon.coupon_code
+        # LOGIN CUSTOMER
+        request.session['evibe_customer_id'] = customer.id
+
+        request.session['evibe_customer_name'] = customer.name
+
+        request.session['evibe_customer_email'] = customer.email
 
         return JsonResponse({
 

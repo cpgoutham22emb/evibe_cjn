@@ -67,6 +67,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'apps.store.context_processors.cart_item_count',
                 'apps.customer_engagement.context_processors.evibe_customer',
+                'apps.customer_engagement.context_processors.reward_context',
             ],
         },
     },

@@ -52,7 +52,6 @@ def generate_otp():
 
 def send_email_otp(email):
 
-    # REMOVE OLD OTPs
     EmailOTP.objects.filter(
         email=email
     ).delete()
@@ -68,9 +67,7 @@ def send_email_otp(email):
     )
 
     send_mail(
-
         subject='Your EVIBE Verification OTP',
-
         message=f'''
 
 Your EVIBE OTP is:
@@ -81,13 +78,9 @@ This OTP is valid for 10 minutes.
 
 - EVIBE Team
 ''',
-
         from_email=settings.DEFAULT_FROM_EMAIL,
-
         recipient_list=[email],
-
         fail_silently=False,
-
     )
 
     return email_otp
