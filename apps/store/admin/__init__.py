@@ -4,3 +4,4 @@ from .refund_admin import *
 from .return_admin import *
 from .analytics_admin import *
 from .admin_views import *
+from .review_admin import *

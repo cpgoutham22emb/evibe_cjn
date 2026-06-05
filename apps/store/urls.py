@@ -10,6 +10,11 @@ from .views.product_views import (
     all_products
 )
 
+from .views.review_views import (
+    product_reviews,
+    load_more_reviews
+)
+
 # CART
 from .views.cart_views import (
     cart_detail,
@@ -51,6 +56,8 @@ urlpatterns = [
     # PRODUCT
     path("", product_list, name="product_list"),
     path("product/<slug:slug>/", product_detail, name="product_detail"),
+    path("product/<slug:slug>/reviews/", product_reviews, name="product_reviews"),
+    path("product/<slug:slug>/reviews/load-more/", load_more_reviews, name="load_more_reviews"),
     path("category/<slug:slug>/", category_products, name="category_products"),
     path('products/all/', all_products, name='all_products'),
     # CART

@@ -237,14 +237,24 @@
 
 </section>
 
+<section class="overflow-hidden border-y">
 
+    <div class="whitespace-nowrap py-5 animate-marquee">
+
+        PREMIUM DENIM • PREMIUM CARGO • PREMIUM FORMALS • PREMIUM DENIM • PREMIUM CARGO • PREMIUM FORMALS
+
+    </div>
+
+</section>
 
 <!-- NEW ARRIVALS -->
 {% if new_arrivals %}
-<section class="px-12 py-24 bg-white">
+<section
+    class="px-12 py-24 bg-white"
+    data-aos="fade-up">
     <div class="max-w-7xl mx-auto">
 
-        <h2 class="text-4xl font-light text-center tracking-wide mb-16">
+        <h2 class="section-title text-center tracking-wide mb-16">
             New Arrivals
         </h2>
 
@@ -313,6 +323,29 @@
 
                         </div>
 
+                            <div class="mt-4">
+
+                                <a href="{% url 'product_detail' product.slug %}"
+                                class="inline-flex
+                                        items-center
+                                        justify-center
+                                        px-6 py-3
+                                        border
+                                        border-black
+                                        text-[11px]
+                                        uppercase
+                                        tracking-[0.18em]
+                                        rounded-xl
+                                        hover:bg-black
+                                        hover:text-white
+                                        transition">
+
+                                    View
+
+                                </a>
+
+                            </div>
+
                         </div>
 
                     </a>
@@ -330,18 +363,18 @@
 <section class="py-28">
     <div class="max-w-7xl mx-auto px-6">
 
-        <h2 class="text-4xl font-light text-center tracking-wide mb-16">
+        <h2 class="section-title text-center tracking-wide mb-16">
             Shop By Category
         </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
 
             <!-- Denim -->
             <a href="{% url 'category_products' 'denim' %}" 
                class="relative group overflow-hidden">
 
                 <img src="/media/banners/Evibe_11226_Denim_Dark_Blue_8_800.webp"
-                     class="w-full aspect-[3/4] object-cover group-hover:scale-105 transition duration-700">
+                     class="w-full h-56 md:aspect-[3/4] md:h-auto object-cover group-hover:scale-105 transition duration-700">
 
                 <div class="absolute inset-0 bg-black/30"></div>
 
@@ -356,7 +389,7 @@
                class="relative group overflow-hidden">
 
                 <img src="/media/banners/Evibe_21124_Trouser_Green_1_800.webp"
-                     class="w-full aspect-[3/4] object-cover group-hover:scale-105 transition duration-700">
+                     class="w-full h-56 md:aspect-[3/4] md:h-auto object-cover group-hover:scale-105 transition duration-700">
 
                 <div class="absolute inset-0 bg-black/30"></div>
 
@@ -371,7 +404,7 @@
                class="relative group overflow-hidden">
 
                 <img src="/media/banners/Evibe_66607_Formal_Silver_2_800.webp"
-                     class="w-full aspect-[3/4] object-cover group-hover:scale-105 transition duration-700">
+                     class="w-full h-56 md:aspect-[3/4] md:h-auto object-cover group-hover:scale-105 transition duration-700">
 
                 <div class="absolute inset-0 bg-black/30"></div>
 
@@ -387,10 +420,10 @@
 
 <!-- BEST SELLERS -->
 {% if best_sellers %}
-<section class="px-12 py-24 bg-[#f8f8f8]">
+<section class="px-12 py-24 bg-[#f8f8f8]" data-aos="fade-up">
     <div class="max-w-7xl mx-auto">
 
-        <h2 class="text-4xl font-light text-center tracking-wide mb-16">
+        <h2 class="section-title text-center tracking-wide mb-16">
             Best Sellers
         </h2>
 
@@ -403,9 +436,16 @@
 
                     <div class="relative overflow-hidden">
 
-                        <span class="absolute top-3 right-3 bg-white text-black text-xs px-3 py-1 z-10 shadow">
-                            BEST SELLER
-                        </span>
+                            <span class="absolute left-6 top-20
+                                        bg-black text-white
+                                        text-[8px]
+                                        px-2 py-1
+                                        tracking-[0.15em]
+                                        rotate-[-90deg]
+                                        origin-left
+                                        z-10">
+                                BEST SELLER
+                            </span>
 
                         <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
                              class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-105">
@@ -457,6 +497,31 @@
 
                             {% endif %}
 
+
+                        </div>
+
+                        
+                        <div class="mt-4">
+
+                            <a href="{% url 'product_detail' product.slug %}"
+                                class="inline-flex
+                                        items-center
+                                        justify-center
+                                        px-6 py-3
+                                        border
+                                        border-black
+                                        text-[11px]
+                                        uppercase
+                                        tracking-[0.18em]
+                                        rounded-xl
+                                        hover:bg-black
+                                        hover:text-white
+                                        transition">
+
+                                View
+
+                            </a>
+
                         </div>
 
                     </div>
@@ -474,10 +539,10 @@
 
 <!-- FEATURED PRODUCTS -->
 {% if featured_products %}
-<section class="px-12 py-24 bg-[#f8f8f8]">
+<section class="px-12 py-24 bg-[#f8f8f8]" data-aos="fade-up">
     <div class="max-w-7xl mx-auto">
 
-        <h2 class="text-4xl font-light text-center tracking-wide mb-16">
+        <h2 class="section-title text-center tracking-wide mb-16">
             Featured Collection
         </h2>
 
@@ -547,7 +612,29 @@
                             {% endif %}
 
                         </div>
+   
+                        <div class="mt-4">
 
+                            <a href="{% url 'product_detail' product.slug %}"
+                                class="inline-flex
+                                        items-center
+                                        justify-center
+                                        px-6 py-3
+                                        border
+                                        border-black
+                                        text-[11px]
+                                        uppercase
+                                        tracking-[0.18em]
+                                        rounded-xl
+                                        hover:bg-black
+                                        hover:text-white
+                                        transition">
+
+                                View
+
+                            </a>
+
+                        </div>
                     </div>
 
                 </a>
@@ -562,10 +649,10 @@
 {% endif %}
 
 <!-- All Premium Products (NO SIDEBAR HERE) -->
-<section class="px-12 pb-32">
+<section class="px-12 pb-32 bg-white" data-aos="fade-up">
     <div class="max-w-7xl mx-auto">
 
-        <h2 class="text-4xl font-light text-center tracking-wide mb-20">
+        <h2 class="section-title text-center tracking-wide mb-20">
             All Premium Products
         </h2>
 
@@ -582,15 +669,15 @@
                 <div class="relative overflow-hidden">
 
                     {% if product.all_products_order and product.all_products_order <= 3 %}
-                        <span class="absolute top-2 left-2
-                            bg-black text-white
-                            text-[9px] md:text-[10px]
-                            px-2 md:px-3
-                            py-1
-                            uppercase
-                            tracking-[0.18em]
-                            font-semibold
-                            z-10">
+                        <span class="absolute top-2 right-2
+                                    bg-black text-white
+                                    text-[9px] md:text-[10px]
+                                    px-2 md:px-3
+                                    py-1
+                                    uppercase
+                                    tracking-[0.18em]
+                                    font-semibold
+                                    z-10">
                             TOP PICK
                         </span>
                     {% endif %}
@@ -610,17 +697,16 @@
                     {% endif %}
                 
                     {% if product.is_best_seller %}
-                        <span class="absolute top-2 right-2
-                            bg-white text-black
-                            text-[9px] md:text-[10px]
-                            px-2 md:px-3
-                            py-1
-                            uppercase
-                            tracking-[0.18em]
-                            font-semibold
-                            z-10 shadow-sm">
-                            BEST SELLER
-                        </span>
+                            <span class="absolute left-6 top-20
+                                        bg-black text-white
+                                        text-[8px]
+                                        px-2 py-1
+                                        tracking-[0.15em]
+                                        rotate-[-90deg]
+                                        origin-left
+                                        z-10">
+                                BEST SELLER
+                            </span>
                     {% endif %}
                 
                     {% if product.is_new_arrival %}
@@ -687,6 +773,29 @@
                             </span>
 
                         {% endif %}
+
+                    </div>
+
+                    <div class="mt-4">
+
+                        <a href="{% url 'product_detail' product.slug %}"
+                        class="inline-flex
+                                items-center
+                                justify-center
+                                px-6 py-3
+                                border
+                                border-black
+                                text-[11px]
+                                uppercase
+                                tracking-[0.18em]
+                                rounded-xl
+                                hover:bg-black
+                                hover:text-white
+                                transition">
+
+                            View
+
+                        </a>
 
                     </div>
 

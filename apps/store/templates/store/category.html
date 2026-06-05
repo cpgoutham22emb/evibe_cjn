@@ -3,13 +3,29 @@
 
 <div class="max-w-[1500px] mx-auto px-4 md:px-8 py-10 md:py-14">
 
-    <h2 class="text-2xl md:text-5xl
-           font-semibold
-           tracking-tight
-           mb-10 md:mb-14
-           capitalize">
-        {{ category.name }} Collection
-    </h2>
+    <div class="text-center mb-12">
+
+        <p class="text-xs
+                uppercase
+                tracking-[0.4em]
+                text-gray-500
+                mb-4">
+
+            EVIBE {{ category.name }} COLLECTION
+
+        </p>
+
+        <p class="mt-4
+                text-gray-500
+                max-w-2xl
+                mx-auto
+                text-center">
+
+            Crafted for comfort, designed for confidence.
+
+        </p>
+
+    </div>
 
     <div class="flex flex-wrap gap-3 justify-center mb-10 md:mb-14">
 
@@ -17,14 +33,19 @@
 
                 <a href="?size={{ size }}"
                 class="
-                border px-4 py-2 text-sm transition duration-300
+                    border
+                    rounded-full
+                    px-5 py-2
+                    text-sm
+                    tracking-[0.12em]
+                    uppercase transition duration-300
 
-                {% if selected_size == size %}
-                    bg-black text-white
-                {% else %}
-                    hover:bg-black hover:text-white
-                {% endif %}
-                ">
+                    {% if selected_size == size %}
+                        bg-black text-white
+                    {% else %}
+                        hover:bg-black hover:text-white
+                    {% endif %}
+                    ">
 
                     {{ size }}
 
@@ -35,7 +56,12 @@
             {% if selected_size %}
 
                 <a href="{% url 'category_products' category.name %}"
-                class="border px-4 py-2 text-sm bg-red-500 text-white hover:bg-red-600 transition duration-300">
+                class="border
+                    rounded-full
+                    px-5 py-2
+                    text-sm
+                    tracking-[0.12em]
+                    uppercase bg-red-500 text-white hover:bg-red-600 transition duration-300">
 
                     Clear Filter
 
@@ -46,13 +72,18 @@
     </div>
 
 
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+    <div class="grid grid-cols-2
+            lg:grid-cols-4
+            gap-3 md:gap-8">
 
         {% for product in products %}
 
             <div class="group bg-white
                         p-2 md:p-3
-                        transition duration-500">
+                        rounded-2xl
+                        transition-all duration-500
+                        hover:-translate-y-1
+                        hover:shadow-xl">
 
                 <a href="{% url 'product_detail' product.slug %}">
 
@@ -72,9 +103,16 @@
                         {% endif %}
                         <!-- BEST SELLER -->
                         {% if product.is_best_seller %}
-                            <span class="absolute top-3 right-3 bg-white text-black text-xs px-3 py-1 tracking-wider z-10 shadow">
-                                BEST SELLER
-                            </span>
+                                <span class="absolute left-6 top-20
+                                            bg-black text-white
+                                            text-[8px]
+                                            px-2 py-1
+                                            tracking-[0.15em]
+                                            rotate-[-90deg]
+                                            origin-left
+                                            z-10">
+                                    BEST SELLER
+                                </span>
                         {% endif %}
                     
                         <!-- NEW -->
@@ -143,7 +181,7 @@
                 {% endif %}
 
                 <div class="flex items-center gap-3 mt-3">
-                        <!- MRP->
+                        <!--MRP--> 
                         <p class="text-[13px] md:text-[15px]
                             text-gray-400
                             line-through
@@ -170,8 +208,23 @@
                 </div>
 
                 <a href="{% url 'product_detail' product.slug %}"
-                class="inline-block mt-4 bg-[#6B7A46] text-white px-6 py-2 hover:bg-[#556136] transition">
-                View Product
+                class="inline-flex
+                        items-center
+                        justify-center
+                        mt-5
+                        px-6 py-3
+                        border
+                        border-black
+                        text-[11px]
+                        uppercase
+                        tracking-[0.18em]
+                        rounded-xl
+                        hover:bg-black
+                        hover:text-white
+                        transition">
+
+                    View
+
                 </a>
 
             </div>

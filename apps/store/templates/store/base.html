@@ -3,6 +3,7 @@
 <html lang="en">
 
 <head>
+        
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="color-scheme" content="light">
@@ -30,7 +31,23 @@
         <!-- PREMIUM FONTS -->
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
 
+        <!-- AOS ANIMATION -->
+        <link
+            href="https://unpkg.com/aos@2.3.4/dist/aos.css"
+            rel="stylesheet">
+
+        <!-- ICONS -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
         <style>
+
+            html,
+            body{
+                overflow-x:hidden;
+                max-width:100%;
+            }
 
             body{
                 font-family: 'Montserrat', sans-serif;
@@ -62,10 +79,19 @@
 
             /* SECTION TITLE */
             .section-title{
-                font-size:28px;
-                font-weight:700;
-                letter-spacing:0.28em;
-                text-transform:uppercase;
+                font-family:'Cormorant Garamond', serif;
+                font-size:42px;
+                font-weight:600;
+                letter-spacing:0.08em;
+                text-transform:none;
+            }
+
+            @media(max-width:768px){
+
+                .section-title{
+                    font-size:32px;
+                }
+
             }
 
             /* PRODUCT TITLE */
@@ -107,6 +133,80 @@
             .animate-fadeIn{
                 animation:fadeIn 0.4s ease;
             }
+            
+            /* PREMIUM GRAPHICS */
+
+            .graphic-blob{
+
+                position:fixed;
+                border-radius:9999px;
+                filter:blur(140px);
+                opacity:0.18;
+                pointer-events:none;
+                z-index:-1;
+
+            }
+
+            .blob-1{
+                background:
+                radial-gradient(
+                    circle,
+                    rgba(59,130,246,0.35),
+                    rgba(37,99,235,0.15),
+                    transparent
+                );
+            }
+
+            .blob-2{
+                background:
+                radial-gradient(
+                    circle,
+                    rgba(16,185,129,0.35),
+                    rgba(5,150,105,0.15),
+                    transparent
+                );
+            }
+
+            .no-scrollbar::-webkit-scrollbar{
+                display:none;
+            }
+
+            .no-scrollbar{
+                -ms-overflow-style:none;
+                scrollbar-width:none;
+            }
+                        
+            .product-glow{
+
+                position:absolute;
+                top:0;
+                left:0;
+
+                width:100%;
+                height:100%;
+
+                background:
+                linear-gradient(
+                    120deg,
+                    transparent,
+                    rgba(255,255,255,0.25),
+                    transparent
+                );
+
+                transform:translateX(-150%);
+
+                transition:transform 1s ease;
+
+                z-index:2;
+
+                pointer-events:none;
+            }
+
+            .group:hover .product-glow{
+
+                transform:translateX(150%);
+
+            }
 
             @media(max-width:768px){
 
@@ -121,13 +221,45 @@
 
             }
 
+            @keyframes marquee{
+
+                from{
+                    transform:translateX(0);
+                }
+
+                to{
+                    transform:translateX(-50%);
+                }
+
+            }
+
+            .animate-marquee{
+
+                animation:
+                marquee 25s linear infinite;
+
+                font-size:14px;
+
+                letter-spacing:0.4em;
+
+                text-transform:uppercase;
+
+                font-weight:600;
+
+            }
+
         </style>
 
 </head>
     <body>
+        <!-- PREMIUM GRAPHICS -->
+        <div class="graphic-blob blob-1"></div>
+
+        <div class="graphic-blob blob-2"></div>
+
 
         <!-- ANNOUNCEMENT BAR -->
-        <div class="bg-black text-white">
+        <div class="bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#334155] text-white">
 
             <!-- DESKTOP -->
             <div class="hidden md:flex
@@ -167,10 +299,10 @@
 
         <!-- NAVBAR -->
         <nav id="navbar"
-            class="w-full bg-white border-b border-gray-100 sticky top-0 z-[1000] transition-all duration-300">
+            class="w-full bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-0 shadow-sm z-[1000] transition-all duration-300">
 
             <!-- TOP -->
-            <div class="max-w-7xl mx-auto h-24 px-6 lg:px-10 flex items-center justify-between relative">
+            <div class="max-w-7xl mx-auto h-16 px-4 flex items-center justify-between relative">
 
                 <!-- LEFT -->
                 <div class="flex items-center gap-6">
@@ -194,30 +326,52 @@
 
                 <!-- CENTER LOGO -->
                 <a href="/"
-                    class="absolute left-1/2
-                    -translate-x-1/2
-                    evibe-logo
-                    text-4xl md:text-6xl">
+                class="absolute left-1/2 -translate-x-1/2">
 
-                    EVIBE
+                    <img
+                        src="{% static 'images/logo/evibe.svg' %}"
+                        alt="EVIBE"
+                        class="w-[140px] md:w-[180px] h-auto">
 
                 </a>
 
                 <!-- RIGHT -->
-                <div class="hidden md:flex items-center gap-10 text-[12px] uppercase tracking-[0.18em] font-medium">
 
-                    <!-- CART -->
+                <div class="flex items-center gap-4">
+
+                    <!-- MOBILE CART -->
                     <a href="/cart/"
-                        class="nav-link relative">
+                    class="md:hidden relative text-2xl">
+
+                        <i class="fa-solid fa-bag-shopping text-[#0f766e] text-xl"></i>
+
+                        {% if cart_item_count > 0 %}
+                        <span class="absolute -top-2 -right-2
+                                    bg-red-500 text-white
+                                    text-[9px]
+                                    w-5 h-5 rounded-full
+                                    flex items-center justify-center">
+
+                            {{ cart_item_count }}
+
+                        </span>
+                        {% endif %}
+
+                    </a>
+
+                    <!-- DESKTOP CART -->
+                    <a href="/cart/"
+                    class="hidden md:block nav-link relative">
 
                         Cart
 
                         {% if cart_item_count > 0 %}
                         <span class="absolute -top-3 -right-4
-                            bg-black text-white
-                            text-[9px]
-                            w-5 h-5 rounded-full
-                            flex items-center justify-center">
+                                    bg-red-500
+                                     text-white
+                                    text-[9px]
+                                    w-5 h-5 rounded-full
+                                    flex items-center justify-center">
 
                             {{ cart_item_count }}
 
@@ -227,12 +381,14 @@
                     </a>
 
                     <!-- ACCOUNT -->
+
+                    <!-- ACCOUNT -->
                     {% if evibe_customer_name %}
 
                         <div class="relative">
 
                             <button id="accountBtn" 
-                                class="nav-link">
+                                class="hidden md:block nav-link">
 
                                 Account
 
@@ -295,7 +451,7 @@
                         <div class="relative">
 
                             <button id="accountBtn"
-                                    class="nav-link">
+                                    class="hidden md:block nav-link">
 
                                 Account
 
@@ -485,13 +641,19 @@
 
                     {% else %}
 
-                        <button id="mobileLoginBtn"
-                                class="block py-3 text-left nav-link">
+                    <a href="/my-orders/"
+                    class="block py-3 nav-link">
 
-                            Login
+                        Orders
 
-                        </button>
+                    </a>
 
+                    <button id="mobileLoginBtn"
+                            class="block py-3 text-left nav-link">
+
+                        Login
+
+                    </button>
                         <button id="mobileJoinBtn"
                                 class="block py-3 text-left nav-link">
 
@@ -1417,7 +1579,27 @@
 
         </script>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
+        <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+        <script>
+
+            AOS.init({
+                duration:1000,
+                once:true
+            });
+
+            gsap.from(
+                "#navbar",
+                {
+                    y:-60,
+                    opacity:0,
+                    duration:1
+                }
+            );
+
+        </script>
 
     </body>
 
