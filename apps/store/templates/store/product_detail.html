@@ -94,20 +94,36 @@ document.addEventListener("DOMContentLoaded", function(){
         <!-- Product Info -->
         <div class="pt-2 lg:pt-10">
 
-            <h1 class="text-4xl md:text-5xl font-light leading-tight">
-                {{ product.name }}
-            </h1>
+                <h1 class="text-3xl md:text-5xl
+                        font-light
+                        tracking-[0.08em]
+                        uppercase
+                        leading-tight">
+                    {{ product.name }}
+                </h1>
 
-            <p class="mt-4 text-gray-500 leading-7 max-w-xl">
+            <p class="mt-5
+                text-gray-500
+                text-[15px]
+                tracking-[0.05em]
+                leading-8
+                max-w-lg">
                 Crafted for comfort and designed for everyday confidence.
             </p>
 
             {% comment %} LOW STOCK LOGIC {% endcomment %}
                 {% with min_stock=product.variants.all|dictsort:"stock"|first %}
                     {% if min_stock.stock <= 5 %}
-                        <p class="product-price text-black">
+                        <span class="inline-flex
+                                    items-center
+                                    text-[#8B5E3C]
+                                    text-sm
+                                    tracking-[0.12em]
+                                    uppercase">
+
                             🔥 Only Few Left — Order Soon
-                        </p>
+
+                        </span>
                     {% endif %}
                 {% endwith %}
             <div class="flex gap-2 mt-4 mb-8">
@@ -142,10 +158,11 @@ document.addEventListener("DOMContentLoaded", function(){
 
                     <div class="flex items-center gap-4 mt-4 flex-wrap">
 
-                        <p class="text-[18px] md:text-[20px]
-                            font-semibold
-                            text-black
-                            leading-none">
+                        <p class="text-[28px]
+                                md:text-[34px]
+                                font-light
+                                tracking-[0.04em]
+                                text-black">
 
                             ₹{{ product.get_final_price }}
 
@@ -155,10 +172,11 @@ document.addEventListener("DOMContentLoaded", function(){
 
                 {% else %}
 
-                    <p class="text-[18px] md:text-[20px]
-                        font-semibold
-                        text-black
-                        leading-none">
+                    <p class="text-[28px]
+                            md:text-[34px]
+                            font-light
+                            tracking-[0.04em]
+                            text-black">
 
                         ₹{{ product.price }}
 
@@ -168,10 +186,10 @@ document.addEventListener("DOMContentLoaded", function(){
 
                 <div class="flex items-center gap-3 mt-3 flex-wrap">
                         <!--MRP--> 
-                        <p class="text-[13px] md:text-[15px]
+                        <p class="text-[15px]
                             text-gray-400
                             line-through
-                            leading-none">
+                            tracking-[0.04em]">
 
                             ₹{{ product.mrp }}
 
@@ -231,7 +249,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     items-center justify-center
                     bg-black text-white
                     px-12 py-4
-                    rounded-xl
+                    rounded-full
                     text-sm
                     font-semibold
                     tracking-[0.18em]

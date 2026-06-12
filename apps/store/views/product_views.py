@@ -5,6 +5,20 @@ from apps.analytics.models import ProductView
 from django.http import HttpRequest
 
 
+# Helper function to fetch testimonials for the homepage or product pages.
+def get_testimonials():
+
+    return ProductReview.objects.filter(
+        is_approved=True,
+        rating__gte=4,
+        images__isnull=False
+    ).prefetch_related(
+        "images",
+        "customer"
+    ).distinct().order_by(
+        "-created_at"
+    )[:20]
+
 # Views for product listing, product details, and category-wise product listing.
 def product_list(request):
 
@@ -34,6 +48,7 @@ def product_list(request):
         "featured_products": featured_products,
         "best_sellers": best_sellers,
         "new_arrivals": new_arrivals,
+        "testimonials": get_testimonials(),
     })
 
 # For product detail view, we will also track product views and user city for analytics purposes.
@@ -90,7 +105,8 @@ def category_products(request, slug):
         "category": category,
         "products": products,
         "available_sizes": available_sizes,
-        "selected_size": size   
+        "selected_size": size,
+        "testimonials": get_testimonials(),  
     })
 
 # Views for product listing, product details, and category-wise product listing.
@@ -123,7 +139,8 @@ def all_products(request):
     return render(request, 'store/all_products.html', {
         'products': products,
         'available_sizes': available_sizes,
-        'selected_size': size
+        'selected_size': size,
+        'testimonials': get_testimonials(),
     })
 
 

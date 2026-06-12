@@ -96,9 +96,17 @@
 
             /* PRODUCT TITLE */
             .product-title{
-                font-size:15px;
-                font-weight:600;
-                letter-spacing:0.02em;
+                font-size:14px;
+                font-weight:500;
+                text-transform:uppercase;
+                letter-spacing:0.08em;
+                line-height:1.5;
+                min-height:48px;
+
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                text-align:center;
             }
 
             /* PRODUCT PRICE */
@@ -535,11 +543,17 @@
 
             <div class="h-20 flex items-center justify-between px-6 border-b">
 
-                <h2 class="tracking-[0.45em] text-3xl font-bold">
+                <a href="/"
+                    class="absolute left-1/2 -translate-x-1/2">
 
-                    EVIBE
+                        <img
+                            src="{% static 'images/logo/evibe.svg' %}"
+                            alt="EVIBE"
+                            class="w-[140px] md:w-[180px] h-auto">
 
-                </h2>
+                </a>
+
+
 
                 <button id="closeMobileMenu"
                     class="text-4xl">

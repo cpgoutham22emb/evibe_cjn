@@ -36,6 +36,8 @@ def checkout(request):
 
         reward_discount = 0
 
+        total_savings = savings 
+
         final_total = subtotal + shipping_charge
 
         # =========================
@@ -72,9 +74,11 @@ def checkout(request):
 
                 if reward_coupon:
 
-                    reward_discount = (
+                    reward_discount = round((
                         subtotal * reward_coupon.discount_percentage  
-                    ) / 100
+                    ) / 100, 2)
+
+                    total_savings = total_savings + reward_discount
 
                     final_total = final_total - reward_discount
 
@@ -83,6 +87,7 @@ def checkout(request):
             "cart": cart,
             "mrp_total": mrp_total,
             "savings": savings,
+            "total_savings": total_savings,
             "shipping_charge": shipping_charge,
             "reward_coupon": reward_coupon,
             "reward_discount": reward_discount,
@@ -133,9 +138,9 @@ def checkout(request):
 
                 if reward_coupon:
 
-                    reward_discount = (
+                    reward_discount = round((
                         subtotal * reward_coupon.discount_percentage
-                    ) / 100
+                    ) / 100, 2)
 
                     total_amount = total_amount - reward_discount
 

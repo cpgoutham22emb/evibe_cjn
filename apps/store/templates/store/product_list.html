@@ -272,7 +272,7 @@
                             </span>
 
                             <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
-                                class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-105">
+                                class="w-full aspect-[3/4] object-cover rounded-xl transition duration-700 group-hover:scale-105">
 
                         </div>
 
@@ -326,9 +326,11 @@
                             <div class="mt-4">
 
                                 <a href="{% url 'product_detail' product.slug %}"
-                                class="inline-flex
+                                    class="mt-4
+                                        flex
                                         items-center
                                         justify-center
+                                        w-full
                                         px-6 py-3
                                         border
                                         border-black
@@ -340,7 +342,7 @@
                                         hover:text-white
                                         transition">
 
-                                    View
+                                    SHOP NOW →
 
                                 </a>
 
@@ -448,7 +450,7 @@
                             </span>
 
                         <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
-                             class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-105">
+                             class="w-full aspect-[3/4] object-cover rounded-xl transition duration-700 group-hover:scale-105">
 
                     </div>
 
@@ -504,21 +506,23 @@
                         <div class="mt-4">
 
                             <a href="{% url 'product_detail' product.slug %}"
-                                class="inline-flex
-                                        items-center
-                                        justify-center
-                                        px-6 py-3
-                                        border
-                                        border-black
-                                        text-[11px]
-                                        uppercase
-                                        tracking-[0.18em]
-                                        rounded-xl
-                                        hover:bg-black
-                                        hover:text-white
-                                        transition">
+                                class="mt-4
+                                    flex
+                                    items-center
+                                    justify-center
+                                    w-full
+                                    px-6 py-3
+                                    border
+                                    border-black
+                                    text-[11px]
+                                    uppercase
+                                    tracking-[0.18em]
+                                    rounded-xl
+                                    hover:bg-black
+                                    hover:text-white
+                                    transition">
 
-                                View
+                                SHOP NOW →
 
                             </a>
 
@@ -562,7 +566,7 @@
                         {% endif %}
 
                         <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
-                             class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-105">
+                             class="w-full aspect-[3/4] object-cover rounded-xl transition duration-700 group-hover:scale-105">
 
                     </div>
 
@@ -616,21 +620,23 @@
                         <div class="mt-4">
 
                             <a href="{% url 'product_detail' product.slug %}"
-                                class="inline-flex
-                                        items-center
-                                        justify-center
-                                        px-6 py-3
-                                        border
-                                        border-black
-                                        text-[11px]
-                                        uppercase
-                                        tracking-[0.18em]
-                                        rounded-xl
-                                        hover:bg-black
-                                        hover:text-white
-                                        transition">
+                                class="mt-4
+                                    flex
+                                    items-center
+                                    justify-center
+                                    w-full
+                                    px-6 py-3
+                                    border
+                                    border-black
+                                    text-[11px]
+                                    uppercase
+                                    tracking-[0.18em]
+                                    rounded-xl
+                                    hover:bg-black
+                                    hover:text-white
+                                    transition">
 
-                                View
+                                SHOP NOW →
 
                             </a>
 
@@ -724,7 +730,7 @@
                     {% endif %}
                 
                     <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
-                         class="w-full aspect-[3/4] object-cover transition duration-700 group-hover:scale-105">
+                         class="w-full aspect-[3/4] object-cover rounded-xl transition duration-700 group-hover:scale-105">
                 </div>
                 </a>
                 {% endif %}
@@ -778,24 +784,26 @@
 
                     <div class="mt-4">
 
-                        <a href="{% url 'product_detail' product.slug %}"
-                        class="inline-flex
-                                items-center
-                                justify-center
-                                px-6 py-3
-                                border
-                                border-black
-                                text-[11px]
-                                uppercase
-                                tracking-[0.18em]
-                                rounded-xl
-                                hover:bg-black
-                                hover:text-white
-                                transition">
+                            <a href="{% url 'product_detail' product.slug %}"
+                                class="mt-4
+                                    flex
+                                    items-center
+                                    justify-center
+                                    w-full
+                                    px-6 py-3
+                                    border
+                                    border-black
+                                    text-[11px]
+                                    uppercase
+                                    tracking-[0.18em]
+                                    rounded-xl
+                                    hover:bg-black
+                                    hover:text-white
+                                    transition">
 
-                            View
+                                SHOP NOW →
 
-                        </a>
+                            </a>
 
                     </div>
 
@@ -873,6 +881,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
+
+{% include "store/testimonials.html" %}
 
 {% endblock %}
 

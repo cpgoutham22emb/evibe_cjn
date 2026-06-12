@@ -5,6 +5,7 @@ from .refund import Refund
 from .return_request import ReturnRequest
 from .timeline import OrderTimeline
 from .analytics import AnalyticsDashboard
+from .invoice import Invoice
 from .review import (
     ProductReview,
     ReviewImage,

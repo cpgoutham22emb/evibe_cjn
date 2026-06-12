@@ -2,6 +2,8 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
+from .invoice_service import create_invoice
+
 from ..models import Order, ProductVariant
 
 from .inventory_service import restore_full_stock
@@ -63,7 +65,11 @@ def update_order_status(order, new_status):
 
                 variant.stock -= item.quantity
                 variant.save()
-            
+
+            from apps.store.models import Invoice
+
+            if not Invoice.objects.filter(order=order).exists():
+                create_invoice(order)
             order.stock_deducted = True
 
         # -------------------
