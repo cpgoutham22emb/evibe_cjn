@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from apps.store.models import Order
-
+from apps.store.models import Order, ReturnRequest
+from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta
 
 def my_orders(request):
 
@@ -75,4 +77,112 @@ def order_access(request):
     return render(
         request,
         "store/order_access.html"
+    )
+
+
+
+# For simplicity, we assume one item per order in this example
+def request_return(request, order_id):
+
+    customer_email = request.session.get(
+        "evibe_customer_email"
+    )
+
+    if not customer_email:
+
+        return redirect(
+            "order_access"
+        )
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        email=customer_email
+    )
+
+    if not order.delivered_at:
+
+        messages.error(
+            request,
+            "Delivery Date missing."
+        )
+
+        return redirect(
+            "track_order",
+            order.id
+        )
+
+    # Must be delivered
+    if order.status != "DELIVERED":
+
+        messages.error(
+            request,
+            "Return allowed only after delivery."
+        )
+
+        return redirect(
+            "track_order",
+            order.id
+        )
+
+    # 5-day window
+    return_deadline = (
+        order.delivered_at +
+        timedelta(days=5)
+    )
+
+    if timezone.now() > return_deadline:
+
+        messages.error(
+            request,
+            "Return window expired."
+        )
+
+        return redirect(
+            "track_order",
+            order.id
+        )
+
+    if request.method == "POST":
+
+        order_item = order.items.first()
+
+        ReturnRequest.objects.create(
+
+            order=order,
+
+            order_item=order_item,
+
+            quantity=1,
+
+            reason=request.POST.get(
+                "reason"
+            ),
+
+            customer_comments=request.POST.get(
+                "customer_comments"
+            ),
+
+            preferred_pickup_date=request.POST.get(
+                "preferred_pickup_date"
+            )
+
+        )
+
+        messages.success(
+            request,
+            "Return request submitted successfully."
+        )
+
+        return redirect(
+            "track_order",
+            order.id
+        )
+
+    return render(
+        request,
+        "store/request_return.html",
+        {
+            "order": order
+        }
     )

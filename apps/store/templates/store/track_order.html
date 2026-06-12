@@ -108,6 +108,23 @@ Track Shipment
 </a>
 {% endif %}
 
+{% if order.status == "DELIVERED" %}
+
+<a href="{% url 'request_return' order.id %}"
+   class="bg-red-600
+          text-white
+          px-6
+          py-3
+          inline-block
+          mt-4
+          ml-2">
+
+    Request Return
+
+</a>
+
+{% endif %}
+
 </div>
 
 </div>

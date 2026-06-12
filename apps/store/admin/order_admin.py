@@ -141,8 +141,8 @@ class OrderAdmin(admin.ModelAdmin):
         "razorpay_payment_id",
         "created_at",
         "paid_at",
-        "shipped_at"
-        #"status"
+        "shipped_at",
+        "status"
     )
 
     inlines = [OrderItemInline]
@@ -154,9 +154,20 @@ class OrderAdmin(admin.ModelAdmin):
 
         buttons = ""
 
-        # START PROCESSING
+        # ONLINE ORDERS
+
         if obj.status == "PAID":
-            buttons += f'<a class="button" href="start-processing/{obj.id}/">▶ Start</a> '
+
+            buttons += f'<a class="button" href="start-processing/{obj.id}/">▶️ Start</a> '
+
+        # COD ORDERS
+
+        elif (
+            obj.payment_method == "COD"
+            and obj.status == "CREATED"
+        ):
+
+            buttons += f'<a class="button" href="start-processing/{obj.id}/">▶️ Start</a> '
 
         # PACK
         elif obj.status == "PROCESSING":
@@ -164,7 +175,7 @@ class OrderAdmin(admin.ModelAdmin):
 
         # SHIP
         elif obj.status == "PACKED":
-            buttons += f'<a class="button" href="ship/{obj.id}/">🚚 Ship</a> '
+            buttons += f'<a class="button" href="ship/{obj.id}/">🚚 Generate Shipment</a> '
 
         elif obj.status == "RTO":
             buttons += f'<a class="button" href="return-received/{obj.id}/">Warehouse Received</a> '
@@ -245,9 +256,13 @@ class OrderAdmin(admin.ModelAdmin):
                 order.courier_name = shipment["courier_name"]
                 order.save()
 
-            update_order_status(order, "SHIPPED")
+            update_order_status(order, "READY_TO_SHIP")
 
-            self.message_user(request, "Order Shipped", messages.SUCCESS)
+            self.message_user(
+                request,
+                "Shipment created. Order moved to READY_TO_SHIP",
+                messages.SUCCESS
+            )
 
         except Exception as e:
             self.message_user(request, str(e), messages.ERROR)

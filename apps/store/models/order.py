@@ -11,6 +11,7 @@ class Order(models.Model):
         ('PAID', 'Paid'),
         ('PROCESSING', 'Processing'),
         ('PACKED', 'Packed'),
+        ('READY_TO_SHIP', 'Ready to Ship'),
         ('SHIPPED', 'Shipped'),
         ('OUT_FOR_DELIVERY', 'Out For Delivery'),
         ('DELIVERED', 'Delivered'),
@@ -21,6 +22,12 @@ class Order(models.Model):
     PAYMENT_CHOICES = [
         ('COD', 'Cash on Delivery'),
         ('ONLINE', 'Online Payment'),
+    ]
+
+    PAYMENT_STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('PAID', 'Paid'),
+        ('REFUNDED', 'Refunded'),
     ]
 
     RETURN_STATUS = [
@@ -45,6 +52,7 @@ class Order(models.Model):
     pincode = models.CharField(max_length=10)
 
     payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES)
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='CREATED', db_index=True)
 
     #  PRICE FIELDS (MOVE HERE)

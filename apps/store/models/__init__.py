@@ -6,8 +6,5 @@ from .return_request import ReturnRequest
 from .timeline import OrderTimeline
 from .analytics import AnalyticsDashboard
 from .invoice import Invoice
-from .review import (
-    ProductReview,
-    ReviewImage,
-    CustomerStylePhoto,
-)
+from .review import ProductReview, ReviewImage, CustomerStylePhoto
+from .return_photo import ReturnPhoto

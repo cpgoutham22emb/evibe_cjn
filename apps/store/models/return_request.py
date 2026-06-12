@@ -13,6 +13,7 @@ class ReturnRequest(models.Model):
     STATUS_CHOICES = [
         ('REQUESTED', 'Requested'),
         ('APPROVED', 'Approved'),
+        ('PICKUP_SCHEDULED', 'Pickup Scheduled'),
         ('PICKED', 'Picked'),
         ('RECEIVED', 'Received'),
 
@@ -20,6 +21,21 @@ class ReturnRequest(models.Model):
         ('QC_REJECTED', 'QC Rejected'),
 
         ('REJECTED', 'Rejected'),
+    ]
+
+    RETURN_REASONS = [
+
+        ("SIZE", "Size Issue"),
+
+        ("FIT", "Fit Issue"),
+
+        ("WRONG_PRODUCT", "Wrong Product"),
+
+        ("DAMAGED", "Damaged Product"),
+
+        ("QUALITY", "Quality Issue"),
+
+        ("OTHER", "Other"),
     ]
 
     order = models.ForeignKey("Order", on_delete=models.CASCADE)
@@ -34,6 +50,12 @@ class ReturnRequest(models.Model):
     )
 
     inspection_notes = models.TextField(blank=True, null=True)
+
+    reason = models.CharField(max_length=30, choices=RETURN_REASONS, blank=True, null=True)
+
+    customer_comments = models.TextField(blank=True, null=True)
+
+    preferred_pickup_date = models.DateField(blank=True, null=True)
 
     refund_processed = models.BooleanField(default=False)
 
@@ -103,6 +125,7 @@ class ReturnRequest(models.Model):
                 allowed_transitions = {
                     "REQUESTED": ["APPROVED", "REJECTED"],
                     "APPROVED": ["PICKED"],
+                    "PICKUP_SCHEDULED": ["PICKED"],
                     "PICKED": ["RECEIVED"],
                     "RECEIVED": ["QC_APPROVED", "QC_REJECTED"],
                     "QC_APPROVED": [],

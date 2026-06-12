@@ -34,7 +34,8 @@ from .views.checkout_views import (
 from .views.order_views import (
     my_orders,
     track_order,
-    order_access
+    order_access,
+    request_return
 )
 
 # WEBHOOKS
@@ -76,6 +77,8 @@ urlpatterns = [
     path("track-order/<int:order_id>/", track_order, name="track_order"),
     path("my-orders/", my_orders, name="my_orders"),
     path("order-access/", order_access, name="order_access"),
+    path("request-return/<int:order_id>/", request_return, name="request_return"),
+    
     # WEBHOOKS
     path('payment-success/', payment_success, name='payment_success'),
     path("webhook/razorpay/", razorpay_webhook, name="razorpay_webhook"),

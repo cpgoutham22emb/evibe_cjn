@@ -12,10 +12,11 @@ from .timeline_service import log_order_event
 def validate_order_transition(old_status, new_status):
 
     allowed_transitions = {
-        "CREATED": ["PAID", "CANCELLED"],
+        "CREATED": ["PAID", "PROCESSING", "CANCELLED"],
         "PAID": ["PROCESSING", "CANCELLED"],
         "PROCESSING": ["PACKED", "CANCELLED"],
-        "PACKED": ["SHIPPED", "CANCELLED"],
+        "PACKED": ["READY_TO_SHIP", "CANCELLED"],
+        "READY_TO_SHIP": ["SHIPPED", "CANCELLED"],
         "SHIPPED": ["OUT_FOR_DELIVERY", "RTO"],
         "OUT_FOR_DELIVERY": ["DELIVERED", "RTO"],
         "DELIVERED": [],
