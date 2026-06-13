@@ -96,6 +96,9 @@ def update_order_status(order, new_status):
 
             order.delivered_at = timezone.now()
 
+            # COD : Order delivered successfully and courier has collected payment, so we can mark it as PAID.
+            # NOTE : Money to reach EVIBE bank account may take 2-3 days after delivery, 
+            #        but we can consider it PAID at this point since the courier has collected the cash from the customer.
             # COD PAYMENT COLLECTION
             if order.payment_method == "COD":
 
