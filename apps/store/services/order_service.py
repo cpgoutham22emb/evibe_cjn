@@ -95,6 +95,11 @@ def update_order_status(order, new_status):
                 raise ValidationError("Order cannot be delivered before shipping")
 
             order.delivered_at = timezone.now()
+
+            # COD PAYMENT COLLECTION
+            if order.payment_method == "COD":
+
+                order.payment_status = "PAID"
             
         # -------------------
         # STOCK RESTORE (CANCELLED)
