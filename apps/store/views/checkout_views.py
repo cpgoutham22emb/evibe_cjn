@@ -11,6 +11,7 @@ from apps.store.core.cart_manager import Cart
 
 from django.utils import timezone
 from apps.customer_engagement.models import CustomerLead, RewardCoupon
+from apps.store.services.configuration_service import get_store_config
 
 @require_http_methods(["GET", "POST"])
 def checkout(request):
@@ -26,11 +27,21 @@ def checkout(request):
 
         subtotal = cart.get_total_price()
 
+        config = get_store_config()
+
         mrp_total = cart.get_total_mrp()
 
         savings = mrp_total - subtotal
 
-        shipping_charge = 0 if subtotal > 999 else 99
+        total_quantity = sum(
+            item["quantity"]
+            for item in items
+        )
+
+        shipping_charge = (
+            config.shipping_per_pant
+            * total_quantity
+        )
 
         reward_coupon = None
 
@@ -106,7 +117,17 @@ def checkout(request):
 
         subtotal = cart.get_total_price()
 
-        shipping_charge = 0 if subtotal > 999 else 99
+        config = get_store_config()
+
+        total_quantity = sum(
+            item["quantity"]
+            for item in items
+        )
+        
+        shipping_charge = (
+            config.shipping_per_pant
+            * total_quantity
+        )
 
         reward_discount = 0
 

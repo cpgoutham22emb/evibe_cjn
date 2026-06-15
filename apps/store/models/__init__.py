@@ -8,3 +8,4 @@ from .analytics import AnalyticsDashboard
 from .invoice import Invoice
 from .review import ProductReview, ReviewImage, CustomerStylePhoto
 from .return_photo import ReturnPhoto
+from .store_configuration import StoreConfiguration
