@@ -119,7 +119,9 @@ gtag('event', 'begin_checkout', {
                                     focus:outline-none
                                     focus:border-black
                                     transition">
+                        {% if cod_allowed %}
                         <option value="COD">Cash on Delivery</option>
+                        {% endif %}
                         <option value="ONLINE">Online Payment</option>
                     </select>
                 </div>

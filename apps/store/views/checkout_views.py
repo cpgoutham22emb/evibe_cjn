@@ -93,6 +93,14 @@ def checkout(request):
 
                     final_total = final_total - reward_discount
 
+                        
+        cod_allowed = (
+        config.cod_enabled
+        and
+        final_total <= config.max_cod_order_value
+        )
+
+
         return render(request, "store/checkout.html", {
             "items": items,
             "cart": cart,
@@ -102,7 +110,8 @@ def checkout(request):
             "shipping_charge": shipping_charge,
             "reward_coupon": reward_coupon,
             "reward_discount": reward_discount,
-            "final_total": final_total
+            "final_total": final_total,
+            "cod_allowed": cod_allowed,
         })
 
     if request.method == "POST":
@@ -134,6 +143,26 @@ def checkout(request):
         reward_coupon = None
 
         total_amount = subtotal + shipping_charge
+
+        if payment_method == "COD":
+
+            if not config.cod_enabled:
+
+                messages.error(
+                    request,
+                    "Cash on Delivery is currently unavailable."
+                )
+
+                return redirect("/checkout/")
+
+            if total_amount > config.max_cod_order_value:
+
+                messages.error(
+                    request,
+                    "COD is not available for this order value."
+                )
+
+                return redirect("/checkout/")
 
         # =========================
         # EVIBE REWARD
