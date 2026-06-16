@@ -59,6 +59,10 @@ class Order(models.Model):
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    cod_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    advance_paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    amount_collectable = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
 
     # Discount fields
     reward_discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)

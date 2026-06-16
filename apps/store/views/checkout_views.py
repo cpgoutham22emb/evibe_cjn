@@ -138,11 +138,34 @@ def checkout(request):
             * total_quantity
         )
 
+        cod_charge = (
+            config.cod_charge
+            * total_quantity
+        )
+
         reward_discount = 0
 
         reward_coupon = None
 
-        total_amount = subtotal + shipping_charge
+        if payment_method == "ONLINE":
+            cod_charge = 0
+            total_amount = (
+                subtotal
+                + shipping_charge
+            )
+            advance_paid_amount = total_amount
+            amount_collectable = 0
+        else:
+            total_amount = (
+                subtotal
+                + shipping_charge
+                + cod_charge
+            )
+            advance_paid_amount = (
+                shipping_charge
+                + cod_charge
+            )
+            amount_collectable = subtotal
 
         if payment_method == "COD":
 
@@ -208,6 +231,9 @@ def checkout(request):
                 subtotal=subtotal,
                 shipping_charge=shipping_charge,
                 total_amount=total_amount,
+                cod_charge=cod_charge,
+                advance_paid_amount=advance_paid_amount,
+                amount_collectable=amount_collectable,
                 reward_discount=reward_discount,
                 reward_coupon_code=reward_coupon.coupon_code if reward_coupon else None
             )
