@@ -3,3 +3,5 @@ everytime package is installed use the follow commands to run the deployment suc
 pip install package
 pip freeze > requirements.txt (or) pip freeze | findstr django
 git push
+
+do it
