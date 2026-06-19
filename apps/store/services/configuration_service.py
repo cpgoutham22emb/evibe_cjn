@@ -1,7 +1,9 @@
-from apps.store.models import StoreConfiguration
-
 
 def get_store_config():
+
+    from apps.store.models.store_configuration import (
+        StoreConfiguration
+    )
 
     config = StoreConfiguration.objects.first()
 

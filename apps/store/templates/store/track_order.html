@@ -108,7 +108,7 @@ Track Shipment
 </a>
 {% endif %}
 
-{% if order.status == "DELIVERED" %}
+{% if order.status == "DELIVERED" and order.exchange_allowed %}
 
 <a href="{% url 'request_return' order.id %}"
    class="bg-red-600
@@ -122,6 +122,23 @@ Track Shipment
     Request Return
 
 </a>
+
+{% endif %}
+
+{% if order.status == "DELIVERED" and not order.exchange_allowed %}
+
+<div class="mt-4
+            p-4
+            bg-red-50
+            border
+            border-red-200
+            rounded-xl">
+
+    <p class="text-red-600 text-sm font-medium">
+        This order was purchased under a No Return / No Exchange offer.
+    </p>
+
+</div>
 
 {% endif %}
 

@@ -74,6 +74,31 @@ def update_order_status(order, new_status):
             order.stock_deducted = True
 
         # -------------------
+        # READY TO SHIP VALIDATION
+        # -------------------
+        if new_status == "READY_TO_SHIP":
+
+            if not order.provider_name:
+                raise ValidationError(
+                    "Provider Name is required"
+                )
+
+            if not order.courier_name:
+                raise ValidationError(
+                    "Courier Name is required"
+                )
+
+            if not order.awb_code:
+                raise ValidationError(
+                    "AWB Code is required"
+                )
+
+            if not order.tracking_url:
+                raise ValidationError(
+                    "Tracking URL is required"
+                )
+                
+        # -------------------
         # SHIPPING VALIDATION
         # -------------------
         if new_status == "SHIPPED":

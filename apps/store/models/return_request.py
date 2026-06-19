@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from .order import OrderItem
 from .refund import Refund
+from ..services.configuration_service import get_store_config
 
 #   The ReturnRequest model manages product return requests, linking to the Order and specific OrderItem. It tracks the quantity being returned, the status of the return process, and any inspection notes. The save method includes validation to ensure that return quantities do not exceed what was ordered and that status transitions follow a defined workflow. When a return is approved, it updates the returned quantity on the OrderItem and triggers an order status update to reflect the return process.
 class ReturnRequest(models.Model):
@@ -89,7 +90,13 @@ class ReturnRequest(models.Model):
             if not self.order.delivered_at:
                 raise ValidationError("Return allowed only after delivery")
 
-            return_deadline = self.order.delivered_at + timedelta(days=5)
+
+            config = get_store_config()
+
+            return_deadline = (
+                self.order.delivered_at +
+                timedelta(days=config.return_window_days)
+            )
 
             if timezone.now() > return_deadline:
                 raise ValidationError("Return window closed (5 days)")

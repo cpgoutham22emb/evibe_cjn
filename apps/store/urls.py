@@ -21,7 +21,9 @@ from .views.cart_views import (
     add_to_cart,
     remove_from_cart,
     increase_quantity,
-    decrease_quantity
+    decrease_quantity,
+    apply_offer,
+    remove_offer,
 )
 
 # CHECKOUT
@@ -68,6 +70,8 @@ urlpatterns = [
     path("cart/remove/<int:variant_id>/", remove_from_cart, name="remove_from_cart"),
     path("cart/increase/<int:variant_id>/", increase_quantity, name="increase_quantity"),
     path("cart/decrease/<int:variant_id>/", decrease_quantity, name="decrease_quantity"),
+    path("cart/apply-offer/", apply_offer, name="apply_offer"),
+    path("cart/remove-offer/", remove_offer, name="remove_offer"),
 
     # CHECKOUT
     path("checkout/", checkout, name="checkout"),

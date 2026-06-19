@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from ..models import Order, OrderItem, Refund
 from ..services.order_service import update_order_status
 from ..services.refund_service import  calculate_refund_amount
-from ..services.shipping_service import create_shipment
+
 
 # -----------------------
 # ORDER ADMIN
@@ -135,14 +135,113 @@ class OrderAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = (
+        # Customer
+        "customer_name",
+        "email",
+        "phone",
+        "address",
+        "city",
+        "pincode",
+
+        # Pricing
         "subtotal",
         "shipping_charge",
+        "cod_charge",
         "total_amount",
+        "advance_paid_amount",
+        "amount_collectable",
+
+        # Payment
+        "payment_method",
+        "payment_status",
         "razorpay_payment_id",
+
+        # Offers
+        "offer_type",
+        "offer_title",
+        "offer_discount_percentage",
+        "offer_discount_amount",
+        "exchange_allowed",
+
+        # Dates
         "created_at",
         "paid_at",
         "shipped_at",
-        "status"
+        "delivered_at",
+
+        # Status
+        "status",
+        "return_status",
+    )
+
+    fieldsets = (
+
+        (
+            "Customer Details",
+            {
+                "fields": (
+                    "customer_name",
+                    "email",
+                    "phone",
+                    "address",
+                    "city",
+                    "pincode",
+                )
+            }
+        ),
+
+        (
+            "Shipping Details",
+            {
+                "fields": (
+                    "provider_name",
+                    "courier_name",
+                    "awb_code",
+                    "tracking_url",
+                    "shipment_status",
+                )
+            }
+        ),
+
+        (
+            "Pricing",
+            {
+                "fields": (
+                    "subtotal",
+                    "shipping_charge",
+                    "cod_charge",
+                    "total_amount",
+                )
+            }
+        ),
+
+        (
+            "Offer Details",
+            {
+                "fields": (
+                    "offer_type",
+                    "offer_title",
+                    "offer_discount_percentage",
+                    "offer_discount_amount",
+                    "exchange_allowed",
+                )
+            }
+        ),
+
+        (
+            "Order Status",
+            {
+                "fields": (
+                    "status",
+                    "payment_method",
+                    "payment_status",
+                    "paid_at",
+                    "shipped_at",
+                    "delivered_at",
+                )
+            }
+        ),
+
     )
 
     inlines = [OrderItemInline]
@@ -175,7 +274,17 @@ class OrderAdmin(admin.ModelAdmin):
 
         # SHIP
         elif obj.status == "PACKED":
-            buttons += f'<a class="button" href="ship/{obj.id}/">🚚 Generate Shipment</a> '
+            buttons += f'<a class="button" href="ship/{obj.id}/">✅ Mark Ready To Ship</a> '
+        
+        elif obj.status == "READY_TO_SHIP":
+            buttons += f'<a class="button" href="mark-shipped/{obj.id}/">🚚 Shipped</a> '
+
+        elif obj.status == "SHIPPED":
+            buttons += f'<a class="button" href="out-for-delivery/{obj.id}/">📍 Out For Delivery</a> '
+
+        elif obj.status == "OUT_FOR_DELIVERY":
+            buttons += f'<a class="button" href="delivered/{obj.id}/">✅ Delivered</a> '
+            buttons += f'<a class="button" href="rto/{obj.id}/">↩️ RTO</a> '
 
         elif obj.status == "RTO":
             buttons += f'<a class="button" href="return-received/{obj.id}/">Warehouse Received</a> '
@@ -201,6 +310,10 @@ class OrderAdmin(admin.ModelAdmin):
         custom_urls = [
             path("start-processing/<int:order_id>/", self.admin_site.admin_view(self.start_processing)),
             path("pack/<int:order_id>/", self.admin_site.admin_view(self.pack_order)),
+            path("mark-shipped/<int:order_id>/",self.admin_site.admin_view(self.mark_shipped)),
+            path("out-for-delivery/<int:order_id>/",self.admin_site.admin_view(self.mark_out_for_delivery)),
+            path("delivered/<int:order_id>/",self.admin_site.admin_view(self.mark_delivered)),
+            path("rto/<int:order_id>/",self.admin_site.admin_view(self.mark_rto)),
             path("ship/<int:order_id>/", self.admin_site.admin_view(self.ship_order)),
             path("return-received/<int:order_id>/", self.admin_site.admin_view(self.mark_return_received),),
             path("refund-pending/<int:order_id>/", self.admin_site.admin_view(self.mark_refund_pending)),
@@ -247,15 +360,6 @@ class OrderAdmin(admin.ModelAdmin):
         order = Order.objects.get(id=order_id)
 
         try:
-            # 🔥 Create shipment if not exists
-            if not order.awb_code:
-                shipment = create_shipment(order)
-
-                order.shipment_id = shipment["shipment_id"]
-                order.awb_code = shipment["awb_code"]
-                order.courier_name = shipment["courier_name"]
-                order.save()
-
             update_order_status(order, "READY_TO_SHIP")
 
             self.message_user(
@@ -269,7 +373,148 @@ class OrderAdmin(admin.ModelAdmin):
 
         return redirect(request.META.get("HTTP_REFERER"))
     
+     # ----------------------------
+    # Mark shipped
     # -----------------------------
+    def mark_shipped(self, request, order_id):
+
+        order = Order.objects.get(id=order_id)
+
+        try:
+
+            update_order_status(
+                order,
+                "SHIPPED"
+            )
+
+            self.message_user(
+                request,
+                "Order marked as SHIPPED",
+                messages.SUCCESS
+            )
+
+        except Exception as e:
+
+            self.message_user(
+                request,
+                str(e),
+                messages.ERROR
+            )
+
+        return redirect(
+            request.META.get("HTTP_REFERER")
+        )
+    
+
+    # ----------------------------
+    # out for the delivery
+    # -----------------------------
+    def mark_out_for_delivery(
+        self,
+        request,
+        order_id
+    ):
+
+        order = Order.objects.get(
+            id=order_id
+        )
+
+        try:
+
+            update_order_status(
+                order,
+                "OUT_FOR_DELIVERY"
+            )
+
+            self.message_user(
+                request,
+                "Order marked as OUT_FOR_DELIVERY",
+                messages.SUCCESS
+            )
+
+        except Exception as e:
+
+            self.message_user(
+                request,
+                str(e),
+                messages.ERROR
+            )
+
+        return redirect(
+            request.META.get("HTTP_REFERER")
+        )
+    
+    def mark_delivered(
+        self,
+        request,
+        order_id
+    ):
+
+        order = Order.objects.get(
+            id=order_id
+        )
+
+        try:
+
+            update_order_status(
+                order,
+                "DELIVERED"
+            )
+
+            self.message_user(
+                request,
+                "Order marked as DELIVERED",
+                messages.SUCCESS
+            )
+
+        except Exception as e:
+
+            self.message_user(
+                request,
+                str(e),
+                messages.ERROR
+            )
+
+        return redirect(
+            request.META.get("HTTP_REFERER")
+        )
+    
+    def mark_rto(
+        self,
+        request,
+        order_id
+    ):
+
+        order = Order.objects.get(
+            id=order_id
+        )
+
+        try:
+
+            update_order_status(
+                order,
+                "RTO"
+            )
+
+            self.message_user(
+                request,
+                "Order marked as RTO",
+                messages.SUCCESS
+            )
+
+        except Exception as e:
+
+            self.message_user(
+                request,
+                str(e),
+                messages.ERROR
+            )
+
+        return redirect(
+            request.META.get("HTTP_REFERER")
+        )
+
+    # ----------------------------
     # 💸 Mark return received
     # -----------------------------
     def mark_return_received(self, request, order_id):

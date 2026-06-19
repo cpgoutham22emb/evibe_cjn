@@ -12,6 +12,7 @@ from apps.store.core.cart_manager import Cart
 from django.utils import timezone
 from apps.customer_engagement.models import CustomerLead, RewardCoupon
 from apps.store.services.configuration_service import get_store_config
+from apps.store.services.offer_service import get_selected_offer
 
 @require_http_methods(["GET", "POST"])
 def checkout(request):
@@ -43,13 +44,88 @@ def checkout(request):
             * total_quantity
         )
 
+        cod_charge = (
+            config.cod_charge
+            * total_quantity
+        )
+
         reward_coupon = None
 
         reward_discount = 0
 
         total_savings = savings 
 
-        final_total = subtotal + shipping_charge
+        final_total = subtotal + shipping_charge + cod_charge
+
+        selected_offer = get_selected_offer(request)
+
+        offer_discount = 0
+        offer_title = None
+        offer_type = None
+        exchange_allowed = True
+        offer_percentage = 0
+
+        if selected_offer:
+
+            offer_type = selected_offer.get(
+                "type"
+            )
+
+            if offer_type == "REWARD":
+
+                offer_percentage = (
+                    config.reward_percentage
+                )
+
+                exchange_allowed = (
+                    not config.reward_requires_exchange_waiver
+                )
+
+                offer_title = "EVIBE Reward"
+
+            elif offer_type == "FESTIVAL":
+
+                from apps.store.models import (
+                    FestivalOffer
+                )
+
+                festival = FestivalOffer.objects.filter(
+                    id=selected_offer.get("id")
+                ).first()
+
+                if festival:
+
+                    offer_percentage = (
+                        festival.discount_percentage
+                    )
+
+                    exchange_allowed = (
+                        festival.exchange_allowed
+                    )
+
+                    offer_title = (
+                        festival.title
+                    )
+
+            discount_base = (
+                subtotal
+                + shipping_charge
+            )
+
+            offer_discount = round(
+                (
+                    discount_base
+                    * offer_percentage
+                ) / 100,
+                2
+            )
+
+            total_savings = total_savings + offer_discount
+
+            final_total = (
+                final_total
+                - offer_discount
+            )
 
         # =========================
         # EVIBE AUTO REWARD
@@ -105,9 +181,14 @@ def checkout(request):
             "items": items,
             "cart": cart,
             "mrp_total": mrp_total,
+            "selected_offer": selected_offer,
+            "offer_discount": offer_discount,
+            "offer_title": offer_title,
+            "exchange_allowed": exchange_allowed,
             "savings": savings,
             "total_savings": total_savings,
             "shipping_charge": shipping_charge,
+            "cod_charge": cod_charge,
             "reward_coupon": reward_coupon,
             "reward_discount": reward_discount,
             "final_total": final_total,
@@ -146,6 +227,14 @@ def checkout(request):
         reward_discount = 0
 
         reward_coupon = None
+
+        selected_offer = get_selected_offer(request)
+
+        offer_type = None
+        offer_title = None
+        offer_percentage = 0
+        offer_discount = 0
+        exchange_allowed = True
 
         if payment_method == "ONLINE":
             cod_charge = 0
@@ -186,6 +275,64 @@ def checkout(request):
                 )
 
                 return redirect("/checkout/")
+            
+            if selected_offer:
+
+                offer_type = selected_offer.get(
+                    "type"
+                )
+
+                if offer_type == "REWARD":
+
+                    offer_percentage = (
+                        config.reward_percentage
+                    )
+
+                    exchange_allowed = (
+                        not config.reward_requires_exchange_waiver
+                    )
+
+                    offer_title = "EVIBE Reward"
+
+                elif offer_type == "FESTIVAL":
+
+                    from apps.store.models import FestivalOffer
+
+                    festival = FestivalOffer.objects.filter(
+                        id=selected_offer.get("id")
+                    ).first()
+
+                    if festival:
+
+                        offer_percentage = (
+                            festival.discount_percentage
+                        )
+
+                        exchange_allowed = (
+                            festival.exchange_allowed
+                        )
+
+                        offer_title = (
+                            festival.title
+                        )
+
+                discount_base = (
+                    subtotal
+                    + shipping_charge
+                )
+
+                offer_discount = round(
+                    (
+                        discount_base
+                        * offer_percentage
+                    ) / 100,
+                    2
+                )
+
+                total_amount = (
+                    total_amount
+                    - offer_discount
+                )   
 
         # =========================
         # EVIBE REWARD
@@ -231,6 +378,11 @@ def checkout(request):
                 subtotal=subtotal,
                 shipping_charge=shipping_charge,
                 total_amount=total_amount,
+                offer_type=offer_type,
+                offer_title=offer_title,
+                offer_discount_percentage=offer_percentage,
+                offer_discount_amount=offer_discount,
+                exchange_allowed=exchange_allowed,
                 cod_charge=cod_charge,
                 advance_paid_amount=advance_paid_amount,
                 amount_collectable=amount_collectable,
@@ -283,6 +435,10 @@ def checkout(request):
             reward_coupon.save()
 
         cart.clear()
+
+        from apps.store.services.offer_service import clear_selected_offer
+
+        clear_selected_offer(request)
 
         return redirect('/order-success/')
 
