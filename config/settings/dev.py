@@ -3,6 +3,10 @@ from .base import *
 ENVIRONMENT= "development"
 DEBUG = True
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.trycloudflare.com",
+]
+
 ALLOWED_HOSTS = ["*"]
 
 # Database

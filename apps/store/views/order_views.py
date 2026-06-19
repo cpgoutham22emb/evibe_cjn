@@ -3,6 +3,7 @@ from apps.store.models import Order, ReturnRequest
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
+from apps.store.services.configuration_service import get_store_config
 
 def my_orders(request):
 
@@ -100,6 +101,18 @@ def request_return(request, order_id):
         email=customer_email
     )
 
+    if not order.exchange_allowed:
+
+        messages.error(
+            request,
+            "This order is not eligible for returns or exchanges."
+        )
+
+        return redirect(
+            "track_order",
+            order.id
+        )
+    
     if not order.delivered_at:
 
         messages.error(
@@ -126,11 +139,14 @@ def request_return(request, order_id):
         )
 
     # 5-day window
+
+
+    config = get_store_config()
+
     return_deadline = (
         order.delivered_at +
-        timedelta(days=5)
+        timedelta(days=config.return_window_days)
     )
-
     if timezone.now() > return_deadline:
 
         messages.error(

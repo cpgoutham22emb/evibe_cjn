@@ -119,7 +119,9 @@ gtag('event', 'begin_checkout', {
                                     focus:outline-none
                                     focus:border-black
                                     transition">
+                        {% if cod_allowed %}
                         <option value="COD">Cash on Delivery</option>
+                        {% endif %}
                         <option value="ONLINE">Online Payment</option>
                     </select>
                 </div>
@@ -233,16 +235,31 @@ gtag('event', 'begin_checkout', {
 
             {% endif %}
             
-            {% if cart.get_total_price > 999 %}
-            <div class="flex justify-between mb-3 text-green-600">
-                <span>Shipping</span>
-                <span>Free</span>
-            </div>
-            {% else %}
             <div class="flex justify-between mb-3">
                 <span>Shipping</span>
-                <span>₹ 99</span>
+                <span>₹ {{ shipping_charge }}</span>
+
             </div>
+
+            <div class="flex justify-between mb-3">
+                <span>COD Charge</span>
+                <span>₹ {{ cod_charge }}</span>
+            </div>
+
+            {% if selected_offer %}
+
+                <div class="flex justify-between mb-3 text-green-600 font-medium">
+
+                    <span>
+                        {{ offer_title }}
+                    </span>
+
+                    <span>
+                        - ₹ {{ offer_discount }}
+                    </span>
+
+                </div>
+
             {% endif %}
             
             <hr class="my-6">

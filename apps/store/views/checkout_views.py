@@ -11,6 +11,8 @@ from apps.store.core.cart_manager import Cart
 
 from django.utils import timezone
 from apps.customer_engagement.models import CustomerLead, RewardCoupon
+from apps.store.services.configuration_service import get_store_config
+from apps.store.services.offer_service import get_selected_offer
 
 @require_http_methods(["GET", "POST"])
 def checkout(request):
@@ -26,11 +28,26 @@ def checkout(request):
 
         subtotal = cart.get_total_price()
 
+        config = get_store_config()
+
         mrp_total = cart.get_total_mrp()
 
         savings = mrp_total - subtotal
 
-        shipping_charge = 0 if subtotal > 999 else 99
+        total_quantity = sum(
+            item["quantity"]
+            for item in items
+        )
+
+        shipping_charge = (
+            config.shipping_per_pant
+            * total_quantity
+        )
+
+        cod_charge = (
+            config.cod_charge
+            * total_quantity
+        )
 
         reward_coupon = None
 
@@ -38,7 +55,77 @@ def checkout(request):
 
         total_savings = savings 
 
-        final_total = subtotal + shipping_charge
+        final_total = subtotal + shipping_charge + cod_charge
+
+        selected_offer = get_selected_offer(request)
+
+        offer_discount = 0
+        offer_title = None
+        offer_type = None
+        exchange_allowed = True
+        offer_percentage = 0
+
+        if selected_offer:
+
+            offer_type = selected_offer.get(
+                "type"
+            )
+
+            if offer_type == "REWARD":
+
+                offer_percentage = (
+                    config.reward_percentage
+                )
+
+                exchange_allowed = (
+                    not config.reward_requires_exchange_waiver
+                )
+
+                offer_title = "EVIBE Reward"
+
+            elif offer_type == "FESTIVAL":
+
+                from apps.store.models import (
+                    FestivalOffer
+                )
+
+                festival = FestivalOffer.objects.filter(
+                    id=selected_offer.get("id")
+                ).first()
+
+                if festival:
+
+                    offer_percentage = (
+                        festival.discount_percentage
+                    )
+
+                    exchange_allowed = (
+                        festival.exchange_allowed
+                    )
+
+                    offer_title = (
+                        festival.title
+                    )
+
+            discount_base = (
+                subtotal
+                + shipping_charge
+            )
+
+            offer_discount = round(
+                (
+                    discount_base
+                    * offer_percentage
+                ) / 100,
+                2
+            )
+
+            total_savings = total_savings + offer_discount
+
+            final_total = (
+                final_total
+                - offer_discount
+            )
 
         # =========================
         # EVIBE AUTO REWARD
@@ -82,16 +169,30 @@ def checkout(request):
 
                     final_total = final_total - reward_discount
 
+                        
+        cod_allowed = (
+        config.cod_enabled
+        and
+        final_total <= config.max_cod_order_value
+        )
+
+
         return render(request, "store/checkout.html", {
             "items": items,
             "cart": cart,
             "mrp_total": mrp_total,
+            "selected_offer": selected_offer,
+            "offer_discount": offer_discount,
+            "offer_title": offer_title,
+            "exchange_allowed": exchange_allowed,
             "savings": savings,
             "total_savings": total_savings,
             "shipping_charge": shipping_charge,
+            "cod_charge": cod_charge,
             "reward_coupon": reward_coupon,
             "reward_discount": reward_discount,
-            "final_total": final_total
+            "final_total": final_total,
+            "cod_allowed": cod_allowed,
         })
 
     if request.method == "POST":
@@ -106,13 +207,132 @@ def checkout(request):
 
         subtotal = cart.get_total_price()
 
-        shipping_charge = 0 if subtotal > 999 else 99
+        config = get_store_config()
+
+        total_quantity = sum(
+            item["quantity"]
+            for item in items
+        )
+        
+        shipping_charge = (
+            config.shipping_per_pant
+            * total_quantity
+        )
+
+        cod_charge = (
+            config.cod_charge
+            * total_quantity
+        )
 
         reward_discount = 0
 
         reward_coupon = None
 
-        total_amount = subtotal + shipping_charge
+        selected_offer = get_selected_offer(request)
+
+        offer_type = None
+        offer_title = None
+        offer_percentage = 0
+        offer_discount = 0
+        exchange_allowed = True
+
+        if payment_method == "ONLINE":
+            cod_charge = 0
+            total_amount = (
+                subtotal
+                + shipping_charge
+            )
+            advance_paid_amount = total_amount
+            amount_collectable = 0
+        else:
+            total_amount = (
+                subtotal
+                + shipping_charge
+                + cod_charge
+            )
+            advance_paid_amount = (
+                shipping_charge
+                + cod_charge
+            )
+            amount_collectable = subtotal
+
+        if payment_method == "COD":
+
+            if not config.cod_enabled:
+
+                messages.error(
+                    request,
+                    "Cash on Delivery is currently unavailable."
+                )
+
+                return redirect("/checkout/")
+
+            if total_amount > config.max_cod_order_value:
+
+                messages.error(
+                    request,
+                    "COD is not available for this order value."
+                )
+
+                return redirect("/checkout/")
+            
+            if selected_offer:
+
+                offer_type = selected_offer.get(
+                    "type"
+                )
+
+                if offer_type == "REWARD":
+
+                    offer_percentage = (
+                        config.reward_percentage
+                    )
+
+                    exchange_allowed = (
+                        not config.reward_requires_exchange_waiver
+                    )
+
+                    offer_title = "EVIBE Reward"
+
+                elif offer_type == "FESTIVAL":
+
+                    from apps.store.models import FestivalOffer
+
+                    festival = FestivalOffer.objects.filter(
+                        id=selected_offer.get("id")
+                    ).first()
+
+                    if festival:
+
+                        offer_percentage = (
+                            festival.discount_percentage
+                        )
+
+                        exchange_allowed = (
+                            festival.exchange_allowed
+                        )
+
+                        offer_title = (
+                            festival.title
+                        )
+
+                discount_base = (
+                    subtotal
+                    + shipping_charge
+                )
+
+                offer_discount = round(
+                    (
+                        discount_base
+                        * offer_percentage
+                    ) / 100,
+                    2
+                )
+
+                total_amount = (
+                    total_amount
+                    - offer_discount
+                )   
 
         # =========================
         # EVIBE REWARD
@@ -158,6 +378,14 @@ def checkout(request):
                 subtotal=subtotal,
                 shipping_charge=shipping_charge,
                 total_amount=total_amount,
+                offer_type=offer_type,
+                offer_title=offer_title,
+                offer_discount_percentage=offer_percentage,
+                offer_discount_amount=offer_discount,
+                exchange_allowed=exchange_allowed,
+                cod_charge=cod_charge,
+                advance_paid_amount=advance_paid_amount,
+                amount_collectable=amount_collectable,
                 reward_discount=reward_discount,
                 reward_coupon_code=reward_coupon.coupon_code if reward_coupon else None
             )
@@ -207,6 +435,10 @@ def checkout(request):
             reward_coupon.save()
 
         cart.clear()
+
+        from apps.store.services.offer_service import clear_selected_offer
+
+        clear_selected_offer(request)
 
         return redirect('/order-success/')
 

@@ -101,7 +101,7 @@ class ProductVariant(models.Model):
 # - Improves performance using optimized images.
 # - Avoids template path manipulation.
 # - Centralizes image processing logic inside the model (production-safe).
-class ProductImage(models.Model):
+class ProductImage(models.Model):    
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,

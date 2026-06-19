@@ -59,6 +59,16 @@ class Order(models.Model):
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     shipping_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    cod_charge = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    advance_paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    amount_collectable = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    # Offer fields
+    offer_type = models.CharField(max_length=30, blank=True,null=True)
+    offer_title = models.CharField(max_length=200, blank=True, null=True)
+    offer_discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    offer_discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    exchange_allowed = models.BooleanField(default=True)
 
     # Discount fields
     reward_discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -72,17 +82,16 @@ class Order(models.Model):
     paid_at = models.DateTimeField(blank=True, null=True)
 
     # Shipping details
+    provider_name = models.CharField(max_length=100, blank=True, null=True)
     courier_name = models.CharField(max_length=100, blank=True, null=True)
     awb_code = models.CharField(max_length=100, blank=True, null=True)
+    tracking_url = models.URLField(blank=True, null=True)
     
     shipment_id = models.CharField(max_length=100, blank=True, null=True)
 
     shipped_at = models.DateTimeField(blank=True, null=True)
 
     shipment_status = models.CharField(max_length=50, blank=True, null=True)
-
-    tracking_url = models.URLField(blank=True, null=True)
-
     delivered_at = models.DateTimeField(blank=True, null=True)
 
 
