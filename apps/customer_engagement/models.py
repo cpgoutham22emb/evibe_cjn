@@ -16,9 +16,8 @@ class CustomerLead(models.Model):
     ]
 
     STYLE_CHOICES = [
-        ('denim', 'Denim'),
-        ('cargo', 'Cargo'),
-        ('formal', 'Formal'),
+        ('baggy','Baggy'),
+        ('Lenin','Lenin'),
     ]
 
     lead_id = models.UUIDField(

@@ -1,5 +1,9 @@
+import re
 from django.http import JsonResponse
 from apps.store.models import OrderItem
+from apps.store.services.pincode_service import (
+    get_location_from_pincode
+)
 
 
 def get_order_items(request):
@@ -17,3 +21,24 @@ def get_order_items(request):
     ]
 
     return JsonResponse({"items": data})
+
+
+def get_pincode_details(request):
+
+    result = get_location_from_pincode(
+        request.GET.get("pincode", "")
+    )
+
+    if not result.success:
+        return JsonResponse({
+            "success": False,
+            "message": result.message
+        })
+
+    return JsonResponse({
+        "success": True,
+        "pincode": result.pincode,
+        "city": result.city,
+        "district": result.district,
+        "state": result.state,
+    })

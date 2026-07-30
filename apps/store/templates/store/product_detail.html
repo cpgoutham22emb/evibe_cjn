@@ -22,29 +22,101 @@ document.addEventListener("DOMContentLoaded", function(){
         <!-- Premium Product Gallery -->
         <div class="flex flex-col md:flex-row gap-8">
         
-            <!-- Thumbnails -->
-            <div class="flex md:flex-col gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
+            <!-- ================= DESKTOP THUMBNAILS ================= -->
+            <div class="hidden md:flex flex-col items-center">
+
+                <!-- Up -->
+                <button
+                    id="thumbUp"
+                    class="w-9 h-9 rounded-full border border-gray-300 hover:bg-gray-100 transition mb-3">
+
+                    ▲
+
+                </button>
+
+                <!-- Viewport -->
+                <div
+                    id="desktopThumbnailViewport"
+                        class="overflow-hidden h-[520px]">
+
+                    <div
+                        id="desktopThumbnailColumn"
+                        class="flex flex-col gap-4">
+
+                        {% for image in product.images.all %}
+
+                        <div class="w-40 h-40 flex-shrink-0">
+
+                            <img
+                                src="{{ image.optimized.400|default:image.original_image.url }}"
+                                loading="lazy"
+                                decoding="async"
+                                onclick="changeImage({{ forloop.counter0 }})"
+                                class="
+                                    w-full
+                                    h-full
+                                    object-contain
+                                    rounded-xl
+                                    cursor-pointer
+                                    border
+                                    border-gray-200
+                                    hover:border-black
+                                    transition
+                                ">
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                <!-- Down -->
+                <button
+                    id="thumbDown"
+                    class="w-9 h-9 rounded-full border border-gray-300 hover:bg-gray-100 transition mt-3">
+
+                    ▼
+
+                </button>
+
+            </div>
+
+            <!-- ================= MOBILE THUMBNAILS ================= -->
+
+            <div
+                class="flex md:hidden gap-4 overflow-x-auto pb-2">
+
                 {% for image in product.images.all %}
-                    <img src="{{ image.optimized.400|default:image.original_image.url }}"
+
+                    <img
+                        src="{{ image.optimized.400|default:image.original_image.url }}"
                         loading="lazy"
                         decoding="async"
                         onclick="changeImage({{ forloop.counter0 }})"
-                        class="w-20 h-24 md:w-24 md:h-32
-                        object-cover
-                        cursor-pointer
-                        border border-gray-200
-                        hover:border-black
-                        transition duration-300">
+                        class="w-full h-full
+                            object-contain
+                            cursor-pointer
+                            border border-gray-200
+                            hover:border-black
+                            transition duration-300">
+
                 {% endfor %}
+
             </div>
         
             <!-- Main Image Container -->
             <div class="relative
                     w-full
+                    h-[700px]
                     overflow-hidden
                     rounded-3xl
                     group
-                    shadow-sm">
+                    shadow-sm
+                    flex
+                    items-center
+                    justify-center">
             
                 <picture>
                     <source media="(max-width: 600px)"
@@ -57,11 +129,7 @@ document.addEventListener("DOMContentLoaded", function(){
                         loading="eager"
                         decoding="async"
                         src="{{ product.images.first.optimized.1200|default:product.images.first.original_image.url }}"
-                        class="w-full aspect-[3/4]
-                        object-cover
-                        transition duration-700
-                        ease-out
-                        group-hover:scale-105">
+                        class="w-full h-full object-contain object-contain transition duration-500 hover:scale-[1.02]">
                 </picture>
             
             </div>
@@ -533,9 +601,8 @@ document.addEventListener("DOMContentLoaded", function(){
                             </a>
 
                         </div>
+
                 {% endif %}
-
-
             <div class="mt-10 pt-6 border-t text-sm text-gray-500 space-y-2">
                 <p><strong>Product Code:</strong> {{ product.product_code }}</p>
                 <p><strong>Category:</strong> {{ product.category }}</p>
@@ -544,6 +611,96 @@ document.addEventListener("DOMContentLoaded", function(){
         </div>
 
     </div>
+
+    <!-- ===================================================== -->
+    <!-- MORE FROM THIS COLLECTION -->
+    <!-- ===================================================== -->
+
+    <section class="mt-16 border-t pt-12">
+
+        <div class="text-center">
+
+            <p class="text-xs uppercase tracking-[0.35em] text-gray-500">
+
+                MORE FROM THIS COLLECTION
+
+            </p>
+
+            <a href="{% url 'category_products' product.category.name %}"
+            class="inline-flex items-center mt-5 text-2xl md:text-3xl font-light tracking-wide hover:underline">
+
+                Explore the complete {{ product.category.name|title }} Collection →
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ===================================================== -->
+    <!-- YOU MAY ALSO LIKE -->
+    <!-- ===================================================== -->
+
+    {% if similar_products %}
+
+    <section class="mt-20">
+
+        <div class="text-center mb-12">
+
+            <p class="text-xs uppercase tracking-[0.35em] text-gray-500">
+
+                YOU MAY ALSO LIKE
+
+            </p>
+
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-8">
+
+            {% for item in similar_products %}
+
+            <a href="{% url 'product_detail' item.slug %}" class="group">
+
+                <div class="overflow-hidden rounded-2xl">
+
+                    <img
+                        src="{{ item.images.first.optimized.800|default:item.images.first.original_image.url }}"
+                        class="w-full h-full object-contain transition duration-500 group-hover:scale-105">
+
+                </div>
+
+                <div class="mt-5 text-center">
+
+                    <h3 class="product-title">
+
+                        {{ item.name }}
+
+                    </h3>
+
+                    <p class="mt-2 text-xl font-semibold">
+
+                        ₹{{ item.get_final_price }}
+
+                    </p>
+
+                    <span class="mt-4 inline-flex items-center text-sm uppercase tracking-[0.15em]">
+
+                        View Product →
+
+                    </span>
+
+                </div>
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    {% endif %}
     <div class="fixed bottom-0 left-0 right-0
             md:hidden
             bg-white
@@ -583,15 +740,64 @@ document.addEventListener("DOMContentLoaded", function(){
     mainImage.addEventListener("click", openModal);	
     
     function changeImage(index) {
+
         currentIndex = index;
-    
+
         mainImage.classList.add("opacity-0");
-    
+
         setTimeout(() => {
+
             mainImage.src = images[currentIndex];
             modalImage.src = images[currentIndex];
+
             mainImage.classList.remove("opacity-0");
+
         }, 150);
+
+        // Highlight active thumbnail
+        document.querySelectorAll("#desktopThumbnailColumn img, .md\\:hidden img")
+            .forEach((img, i) => {
+
+                if (i === index) {
+
+                    img.classList.add(
+                        "border-black",
+                        "ring-2",
+                        "ring-black"
+                    );
+
+                    img.classList.remove("border-gray-200");
+
+                } else {
+
+                    img.classList.remove(
+                        "border-black",
+                        "ring-2",
+                        "ring-black"
+                    );
+
+                    img.classList.add("border-gray-200");
+
+                }
+
+            });
+
+        // Auto-scroll desktop thumbnails
+        const viewport = document.getElementById("desktopThumbnailViewport");
+        const desktopThumbs =
+            document.querySelectorAll("#desktopThumbnailColumn img");
+
+        if (viewport && desktopThumbs[index]) {
+
+            desktopThumbs[index].scrollIntoView({
+
+                behavior: "smooth",
+                block: "nearest"
+
+            });
+
+        }
+
     }
 
     function nextImage() {
@@ -707,6 +913,52 @@ document.addEventListener("DOMContentLoaded", function(){
                 scrollLeft - walk;
         });
     }
+
+/* ===========================================================
+   Desktop Vertical Thumbnail Scroller
+   =========================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const viewport = document.getElementById("desktopThumbnailViewport");
+    const column = document.getElementById("desktopThumbnailColumn");
+    const up = document.getElementById("thumbUp");
+    const down = document.getElementById("thumbDown");
+
+    if (!viewport || !column) return;
+
+    const thumbs = column.querySelectorAll("img");
+
+    if (thumbs.length === 0) return;
+
+    const gap = 16;                       // gap-4 = 16px
+    const step = thumbs[0].offsetHeight + gap;
+
+    up?.addEventListener("click", () => {
+        viewport.scrollBy({
+            top: -step,
+            behavior: "smooth"
+        });
+    });
+
+    down?.addEventListener("click", () => {
+        viewport.scrollBy({
+            top: step,
+            behavior: "smooth"
+        });
+    });
+
+    viewport.addEventListener("wheel", (e) => {
+        e.preventDefault();
+
+        viewport.scrollBy({
+            top: e.deltaY,
+            behavior: "smooth"
+        });
+
+    }, { passive: false });
+
+});
 </script>
 
 {% endblock %}

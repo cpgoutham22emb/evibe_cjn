@@ -7,3 +7,4 @@ from .admin_views import *
 from .review_admin import *
 from .store_configuration_admin import *
 from .festival_offer_admin import *
+from .pincode_admin import *

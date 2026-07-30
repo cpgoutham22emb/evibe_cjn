@@ -10,7 +10,7 @@
 
         <!-- BLURRED BACKGROUND -->
         <div class="absolute inset-0">
-            <img src="{% static 'images/banners/denim-banner.jpg' %}"
+            <img src="{% static 'images/banners/baggy-banner.jpeg' %}"
                  class="w-full h-full object-cover blur-3xl scale-125 opacity-40">
         </div>
 
@@ -28,7 +28,7 @@
             flex justify-center items-center
             pt-24 md:pt-10">
 
-            <img src="{% static 'images/banners/denim-banner.jpg' %}"
+            <img src="{% static 'images/banners/baggy-banner.jpeg' %}"
                 class="max-h-[46vh] md:max-h-[78vh]
                         w-auto object-contain
                         mx-auto drop-shadow-2xl">
@@ -41,19 +41,19 @@
             text-center md:text-left">
 
                 <p class="tracking-[0.4em] text-sm mb-6 text-gray-300">
-                    DENIM EDIT
+                    BAGGY EDIT
                 </p>
 
                 <h1 class="text-4xl sm:text-5xl md:text-7xl
            font-light leading-tight">
-                    DENIM<br>REDEFINED
+                    BAGGY<br>REDEFINED
                 </h1>
 
                 <p class="mt-8 text-lg text-gray-300 leading-8 max-w-lg">
                     Built for movement. Styled for attention.
                 </p>
 
-                <a href="{% url 'category_products' 'denim' %}"
+                <a href="{% url 'category_products' 'baggy' %}"
                         class="inline-flex items-center justify-center
                             mt-8 md:mt-10
                             border border-white
@@ -81,7 +81,7 @@
 
         <!-- BLURRED BACKGROUND -->
         <div class="absolute inset-0">
-            <img src="{% static 'images/banners/cargo-banner.jpg' %}"
+            <img src="{% static 'images/banners/lenin-banner.jpeg' %}"
                  class="w-full h-full object-cover blur-3xl scale-125 opacity-40">
         </div>
 
@@ -99,7 +99,7 @@
             flex justify-center items-center
             pt-24 md:pt-10">
 
-                <img src="{% static 'images/banners/cargo-banner.jpg' %}"
+                <img src="{% static 'images/banners/lenin-banner.jpeg' %}"
                      class="max-h-[46vh] md:max-h-[78vh] w-auto object-contain mx-auto drop-shadow-2xl">
 
             </div>
@@ -110,7 +110,7 @@
             text-center md:text-left">
 
                 <p class="tracking-[0.4em] text-sm mb-6 text-gray-300">
-                    STREET UTILITY
+                    LENIN UTILITY
                 </p>
 
                 <h1 class="text-4xl sm:text-5xl md:text-7xl
@@ -122,7 +122,7 @@
                     Relaxed fits with everyday edge.
                 </p>
 
-                <a href="{% url 'category_products' 'cargo' %}"
+                <a href="{% url 'category_products' 'lenin' %}"
                         class="inline-flex items-center justify-center
                             mt-8 md:mt-10
                             border border-white
@@ -136,74 +136,6 @@
                             transition duration-500">
 
                     Own The Street
-
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ================= SLIDE 3 ================= -->
-    <div class="hero-slide absolute inset-0 opacity-0 transition-opacity duration-1000">
-
-        <!-- BLURRED BACKGROUND -->
-        <div class="absolute inset-0">
-            <img src="{% static 'images/banners/formal-banner.jpg' %}"
-                 class="w-full h-full object-cover blur-3xl scale-125 opacity-40">
-        </div>
-
-        <!-- CONTENT -->
-        <div class="relative z-10 h-full max-w-7xl mx-auto
-                    px-6 md:px-12
-                    flex flex-col md:flex-row
-                    items-center justify-between
-                    gap-6 md:gap-20
-                    pt-24 md:pt-0
-                    pb-16 md:pb-0">
-
-            <!-- LEFT IMAGE -->
-            <div class="w-full md:w-1/2
-            flex justify-center items-center
-            pt-24 md:pt-10">
-
-                <img src="{% static 'images/banners/formal-banner.jpg' %}"
-                     class="max-h-[46vh] md:max-h-[78vh] w-auto object-contain mx-auto drop-shadow-2xl">
-
-            </div>
-
-            <!-- RIGHT TEXT -->
-            <div class="w-full md:w-1/2
-            text-white
-            text-center md:text-left">
-
-                <p class="tracking-[0.4em] text-sm mb-6 text-gray-300">
-                    MODERN FORMALS
-                </p>
-
-                <h1 class="hero-title">
-                    TAILORED<br>CONFIDENCE
-                </h1>
-
-                <p class="mt-8 text-lg text-gray-300 leading-8 max-w-lg">
-                    Sharp fits for modern ambition.
-                </p>
-
-                <a href="{% url 'category_products' 'formal' %}"
-                        class="inline-flex items-center justify-center
-                            mt-8 md:mt-10
-                            border border-white
-                            px-7 md:px-10
-                            py-3 md:py-4
-                            text-[11px] md:text-[13px]
-                            font-semibold
-                            tracking-[0.22em]
-                            uppercase
-                            hover:bg-white hover:text-black
-                            transition duration-500">
-
-                    Elevate Your Fit
 
                 </a>
 
@@ -241,7 +173,7 @@
 
     <div class="whitespace-nowrap py-5 animate-marquee">
 
-        PREMIUM DENIM • PREMIUM CARGO • PREMIUM FORMALS • PREMIUM DENIM • PREMIUM CARGO • PREMIUM FORMALS
+        PREMIUM LENIN • PREMIUM BAGGY • PREMIUM LENIN • PREMIUM BAGGY
 
     </div>
 
@@ -272,7 +204,7 @@
                             </span>
 
                             <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
-                                class="w-full aspect-[3/4] object-cover rounded-xl transition duration-700 group-hover:scale-105">
+                                class="w-full h-full object-contain rounded-xl transition duration-700 group-hover:scale-105">
 
                         </div>
 
@@ -371,37 +303,39 @@
 
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
 
-            <!-- Denim -->
-            <a href="{% url 'category_products' 'denim' %}" 
+            <!-- baggy -->
+            <a href="{% url 'category_products' 'baggy' %}" 
                class="relative group overflow-hidden">
 
-                <img src="/media/banners/Evibe_11226_Denim_Dark_Blue_8_800.webp"
+                <img src="/media/banners/Evibe_3_Baggy_DarkBlue_5_800.webp"
                      class="w-full h-56 md:aspect-[3/4] md:h-auto object-cover group-hover:scale-105 transition duration-700">
 
                 <div class="absolute inset-0 bg-black/30"></div>
 
                 <div class="absolute bottom-10 left-10 text-white">
-                    <h3 class="text-3xl font-light tracking-wide">Denim</h3>
+                    <h3 class="text-3xl font-light tracking-wide">Baggy</h3>
                 </div>
 
             </a>
 
-            <!-- Cargo -->
-            <a href="{% url 'category_products' 'cargo' %}" 
+            <!-- Lenin -->
+            <a href="{% url 'category_products' 'lenin' %}" 
                class="relative group overflow-hidden">
 
-                <img src="/media/banners/Evibe_21124_Trouser_Green_1_800.webp"
+                <img src="/media/banners/Evibe_2_Lenin_OlivGreen_5_800.webp"
                      class="w-full h-56 md:aspect-[3/4] md:h-auto object-cover group-hover:scale-105 transition duration-700">
 
                 <div class="absolute inset-0 bg-black/30"></div>
 
                 <div class="absolute bottom-10 left-10 text-white">
-                    <h3 class="text-3xl font-light tracking-wide">Cargo</h3>
+                    <h3 class="text-3xl font-light tracking-wide">Lenin</h3>
                 </div>
 
             </a>
 
-            <!-- Formal -->
+<!--
+
+            
             <a href="{% url 'category_products' 'formal' %}" 
                class="relative group overflow-hidden">
 
@@ -415,7 +349,7 @@
                 </div>
 
             </a>
-
+-->
         </div>
     </div>
 </section>
@@ -450,7 +384,7 @@
                             </span>
 
                         <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
-                             class="w-full aspect-[3/4] object-cover rounded-xl transition duration-700 group-hover:scale-105">
+                             class="w-full h-full object-contain rounded-xl transition duration-700 group-hover:scale-105">
 
                     </div>
 
@@ -566,7 +500,7 @@
                         {% endif %}
 
                         <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
-                             class="w-full aspect-[3/4] object-cover rounded-xl transition duration-700 group-hover:scale-105">
+                             class="w-full h-full object-contain rounded-xl transition duration-700 group-hover:scale-105">
 
                     </div>
 
@@ -730,7 +664,7 @@
                     {% endif %}
                 
                     <img src="{{ product.images.first.optimized.800|default:product.images.first.original_image.url }}"
-                         class="w-full aspect-[3/4] object-cover rounded-xl transition duration-700 group-hover:scale-105">
+                         class="w-full h-full object-contain rounded-xl transition duration-700 group-hover:scale-105">
                 </div>
                 </a>
                 {% endif %}

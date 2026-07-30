@@ -26,6 +26,7 @@ class Order(models.Model):
 
     PAYMENT_STATUS_CHOICES = [
         ('PENDING', 'Pending'),
+        ('PARTIALLY_PAID', 'Partially Paid'),
         ('PAID', 'Paid'),
         ('REFUNDED', 'Refunded'),
     ]
@@ -49,6 +50,8 @@ class Order(models.Model):
     phone = models.CharField(max_length=20)
     address = models.TextField()
     city = models.CharField(max_length=100)
+    district = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
     pincode = models.CharField(max_length=10)
 
     payment_method = models.CharField(max_length=20, choices=PAYMENT_CHOICES)

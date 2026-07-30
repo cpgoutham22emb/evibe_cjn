@@ -141,6 +141,7 @@ class OrderAdmin(admin.ModelAdmin):
         "phone",
         "address",
         "city",
+        "district",
         "pincode",
 
         # Pricing
@@ -185,6 +186,7 @@ class OrderAdmin(admin.ModelAdmin):
                     "phone",
                     "address",
                     "city",
+                    "district",
                     "pincode",
                 )
             }

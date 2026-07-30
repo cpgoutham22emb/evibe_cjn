@@ -48,6 +48,12 @@ def payment_success(request):
 
                 order.razorpay_payment_id = razorpay_payment_id
                 order.razorpay_signature = razorpay_signature
+
+                if order.payment_method == "ONLINE":
+                    order.payment_status = "PAID"
+                else:
+                    order.payment_status = "PARTIALLY_PAID"
+
                 order.save()
 
                 update_order_status(order, "PAID")
@@ -138,6 +144,12 @@ def razorpay_webhook(request):
                 if order.status != "PAID":
 
                     order.razorpay_payment_id = razorpay_payment_id
+
+                    if order.payment_method == "ONLINE":
+                        order.payment_status = "PAID"
+                    else:
+                        order.payment_status = "PARTIALLY_PAID"
+
                     order.save()
 
                     update_order_status(order, "PAID")

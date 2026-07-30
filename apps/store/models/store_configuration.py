@@ -33,6 +33,10 @@ class StoreConfiguration(models.Model):
         default=5000
     )
 
+    cod_advance_required = models.BooleanField(
+        default=True
+    )
+
     # -----------------------
     # REWARDS
     # -----------------------

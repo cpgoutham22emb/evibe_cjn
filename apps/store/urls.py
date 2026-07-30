@@ -50,7 +50,8 @@ from .views.webhook_views import (
 
 # AJAX
 from .views.ajax_views import (
-    get_order_items
+    get_order_items,
+    get_pincode_details,
 )
 
 
@@ -120,4 +121,6 @@ urlpatterns = [
     ),
     # AJAX
     path("ajax/order-items/", get_order_items, name="get_order_items"),
+    path("ajax/pincode/", get_pincode_details, name="get_pincode_details"),
+
 ]   

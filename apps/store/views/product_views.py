@@ -216,6 +216,20 @@ def product_detail(request, slug):
             city=city
         )
 
+    # ===============================
+    # SIMILAR PRODUCTS
+    # ===============================
+
+    similar_products = (
+        Product.objects.filter(
+            active=True,
+            category=product.category
+        )
+        .exclude(id=product.id)
+        .prefetch_related("images")
+        .order_by("-created_at")[:4]
+    )
+
     return render(
         request,
         "store/product_detail.html",
@@ -230,5 +244,6 @@ def product_detail(request, slug):
                 average_rating,
                 1
             ),
+            "similar_products": similar_products,
         }
     )

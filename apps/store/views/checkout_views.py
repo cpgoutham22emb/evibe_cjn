@@ -13,6 +13,8 @@ from django.utils import timezone
 from apps.customer_engagement.models import CustomerLead, RewardCoupon
 from apps.store.services.configuration_service import get_store_config
 from apps.store.services.offer_service import get_selected_offer
+from apps.store.services.checkout_validation_service import validate_checkout
+
 
 @require_http_methods(["GET", "POST"])
 def checkout(request):
@@ -176,6 +178,31 @@ def checkout(request):
         final_total <= config.max_cod_order_value
         )
 
+        # =========================
+        # PAYMENT SUMMARY
+        # =========================
+
+        online_pay_now = final_total
+
+        if cod_allowed:
+            cod_pay_now = shipping_charge + cod_charge
+            cod_pay_later = subtotal - offer_discount - reward_discount
+        else:
+            cod_pay_now = 0
+            cod_pay_later = 0
+
+        # ==========================================
+        # PREPARE DISPLAY DATA FOR CHECKOUT
+        # ==========================================
+
+        for item in items:
+
+            unit_mrp = item["product"].price
+
+            line_mrp = unit_mrp * item["quantity"]
+
+            item["unit_mrp"] = unit_mrp
+            item["line_mrp"] = line_mrp
 
         return render(request, "store/checkout.html", {
             "items": items,
@@ -192,22 +219,50 @@ def checkout(request):
             "reward_coupon": reward_coupon,
             "reward_discount": reward_discount,
             "final_total": final_total,
+            "online_pay_now": online_pay_now,
+            "cod_pay_now": cod_pay_now,
+            "cod_pay_later": cod_pay_later,
             "cod_allowed": cod_allowed,
         })
 
     if request.method == "POST":
 
-        customer_name = request.POST.get('customer_name')
-        phone = request.POST.get('phone')
-        email = request.POST.get('email')
-        address = request.POST.get('address')
-        city = request.POST.get('city')
+        validation = validate_checkout(request)
+        if not validation.success:
+            messages.error(request, validation.message)
+            return redirect("/checkout/")
+
+        customer_name = validation.customer_name
+        phone = validation.phone
+        email = validation.email
+        house_no = request.POST.get("house_no", "").strip()
+        building = request.POST.get("building", "").strip()
+        street = request.POST.get("street", "").strip()
+        landmark = request.POST.get("landmark", "").strip()
+
+        address = "\n".join(
+            part
+            for part in [
+                house_no,
+                building,
+                street,
+                landmark,
+            ]
+            if part
+        )
+        
+        
+        city = validation.city
+        district = validation.district
+        state = validation.state
         pincode = request.POST.get('pincode')
         payment_method = request.POST.get('payment_method')
+        
 
         subtotal = cart.get_total_price()
 
         config = get_store_config()
+
 
         total_quantity = sum(
             item["quantity"]
@@ -372,6 +427,8 @@ def checkout(request):
                 email=email,
                 address=address,
                 city=city,
+                district=district,
+                state=state,
                 pincode=pincode,
                 payment_method=payment_method,
                 status='CREATED',
@@ -400,29 +457,42 @@ def checkout(request):
                     price=item['product'].get_final_price()
                 )
 
+        # ONLINE -> Pay Full Amount
+        # COD -> Pay Only Advance
         if payment_method == "ONLINE":
+            razorpay_amount = total_amount
+        else:
+            razorpay_amount = advance_paid_amount
 
-            client = razorpay.Client(
-                auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
-            )
 
-            razorpay_order = client.order.create({
-                "amount": int(total_amount * 100),
-                "currency": "INR",
-                "payment_capture": "1"
-            })
+        client = razorpay.Client(
+            auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
+        )
 
-            order.razorpay_order_id = razorpay_order["id"]
-            order.save()
+        data = {
+            "amount": int(razorpay_amount * 100),
+            "currency": "INR",
+            "payment_capture": 1,
+        }
 
-            return render(request, "store/razorpay_checkout.html", {
+        razorpay_order = client.order.create(data)
+        
+        order.razorpay_order_id = razorpay_order["id"]
+
+        order.save()
+
+        return render(
+            request,
+            "store/razorpay_checkout.html",
+            {
                 "order": order,
                 "razorpay_key": settings.RAZORPAY_KEY_ID,
                 "razorpay_order_id": razorpay_order["id"],
-                "amount": int(total_amount * 100),
+                "amount": int(razorpay_amount * 100),
                 "customer_name": customer_name,
                 "phone": phone,
-            })
+            },
+        )
 
         # =========================
         # MARK REWARD USED
