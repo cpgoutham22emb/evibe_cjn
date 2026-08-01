@@ -81,34 +81,45 @@ class Command(BaseCommand):
                         f"Product not found: {row['product_code']}"
                     ))
 
+
         # ----------------------------
         # LINK IMAGES
         # ----------------------------
-        
         products = Product.objects.all()
-        
+
         for product in products:
-        
+
             original_folder = os.path.join(
                 settings.MEDIA_ROOT,
                 "products",
                 product.product_code,
                 "original"
             )
-        
-            if os.path.exists(original_folder):
-        
-                for filename in os.listdir(original_folder):
-        
-                    if filename.lower().endswith((".jpg", ".jpeg", ".png")):
-        
-                        image_path = f"products/{product.product_code}/original/{filename}"
-        
-                        ProductImage.objects.get_or_create(
-                            product=product,
-                            original_image=image_path
-                        )
-        
-                self.stdout.write(self.style.SUCCESS(
+
+            if not os.path.exists(original_folder):
+                continue
+
+            # Remove old image records
+            ProductImage.objects.filter(product=product).delete()
+
+            # Read images in a fixed order
+            image_files = sorted(
+                f for f in os.listdir(original_folder)
+                if f.lower().endswith((".jpg", ".jpeg", ".png"))
+            )
+
+            # Create ProductImage records
+            for filename in image_files:
+
+                image_path = f"products/{product.product_code}/original/{filename}"
+
+                ProductImage.objects.create(
+                    product=product,
+                    original_image=image_path
+                )
+
+            self.stdout.write(
+                self.style.SUCCESS(
                     f"Images synced for {product.product_code}"
-                ))
+                )
+            )
