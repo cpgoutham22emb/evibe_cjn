@@ -24,6 +24,10 @@ def add_to_cart(request):
         cart = Cart(request)
         cart.add(variant_id)
 
+        # BUY NOW
+        if request.POST.get("buy_now") == "1":
+            return redirect("/cart/")
+
         messages.success(request, "Added to cart")
     return redirect(request.META.get('HTTP_REFERER'))
 

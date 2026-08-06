@@ -55,13 +55,22 @@
 
             {% if selected_size %}
 
-                <a href="{% url 'category_products' category.name %}"
-                class="border
-                    rounded-full
-                    px-5 py-2
-                    text-sm
-                    tracking-[0.12em]
-                    uppercase bg-red-500 text-white hover:bg-red-600 transition duration-300">
+                {% if clear_filter_url == "category_products" %}
+
+                    <a href="{% url 'category_products' category.name %}"
+
+                {% else %}
+
+                    <a href="{% url clear_filter_url %}"
+
+                {% endif %}
+
+                    class="border
+                        rounded-full
+                        px-5 py-2
+                        text-sm
+                        tracking-[0.12em]
+                        uppercase bg-red-500 text-white hover:bg-red-600 transition duration-300">
 
                     Clear Filter
 

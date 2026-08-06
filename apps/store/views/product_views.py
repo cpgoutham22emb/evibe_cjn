@@ -106,6 +106,7 @@ def category_products(request, slug):
         "products": products,
         "available_sizes": available_sizes,
         "selected_size": size,
+        "clear_filter_url": "category_products",
         "testimonials": get_testimonials(),  
     })
 
@@ -135,6 +136,7 @@ def all_products(request):
         'size',
         flat=True
     ).distinct().order_by('size')
+
 
     return render(request, 'store/all_products.html', {
         'products': products,
@@ -187,6 +189,7 @@ def product_detail(request, slug):
         or 0
     )
 
+
     # ===============================
     # PRODUCT VIEW TRACKING
     # ===============================
@@ -230,6 +233,19 @@ def product_detail(request, slug):
         .order_by("-created_at")[:4]
     )
 
+    out_of_stock_variants = product.variants.filter(
+        stock__lte=0
+    ).order_by("size")
+
+    out_of_stock_sizes = list(
+        out_of_stock_variants.values_list(
+            "size",
+            flat=True
+        )
+    )
+
+    has_out_of_stock = out_of_stock_variants.exists()
+
     return render(
         request,
         "store/product_detail.html",
@@ -245,5 +261,91 @@ def product_detail(request, slug):
                 1
             ),
             "similar_products": similar_products,
+            "out_of_stock_sizes": out_of_stock_sizes,
+            "has_out_of_stock": has_out_of_stock,
         }
+    )
+
+def new_arrivals(request):
+
+    size = request.GET.get("size")
+
+    products = Product.objects.filter(
+        active=True,
+        is_new_arrival=True
+    ).prefetch_related("images").order_by(
+        F("new_arrival_order").asc(nulls_last=True),
+        "-created_at"
+    )
+
+    if size:
+        products = products.filter(
+            variants__size=size
+        )
+
+    available_sizes = ProductVariant.objects.filter(
+        product__is_new_arrival=True,
+        product__active=True
+    ).values_list(
+        "size",
+        flat=True
+    ).distinct().order_by("size")
+
+    return render(request, "store/category.html", {
+        "products": products,
+        "available_sizes": available_sizes,
+        "selected_size": size,
+        "clear_filter_url": "new_arrivals",
+        "category": {
+            "name": "New Arrivals"
+        },
+        "testimonials": get_testimonials(),
+    })
+
+
+def best_sellers(request):
+
+    size = request.GET.get("size")
+
+    products = Product.objects.filter(
+        active=True,
+        is_best_seller=True
+    ).prefetch_related("images").order_by(
+        F("best_seller_order").asc(nulls_last=True),
+        "-created_at"
+    )
+
+    if size:
+        products = products.filter(
+            variants__size=size
+        )
+
+    available_sizes = ProductVariant.objects.filter(
+        product__is_best_seller=True,
+        product__active=True
+    ).values_list(
+        "size",
+        flat=True
+    ).distinct().order_by("size")
+
+    return render(request, "store/category.html", {
+        "products": products,
+        "available_sizes": available_sizes,
+        "selected_size": size,
+        "clear_filter_url": "best_sellers",
+        "category": {
+            "name": "Best Sellers"
+        },
+        "testimonials": get_testimonials(),
+    })
+
+def denim_coming_soon(request):
+
+    return render(
+        request,
+        "store/coming_soon.html",
+        {
+            "title": "EVIBE Denim",
+            "subtitle": "Launching Soon",
+        },
     )

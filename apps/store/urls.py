@@ -54,6 +54,23 @@ from .views.ajax_views import (
     get_pincode_details,
 )
 
+from .views.product_views import (
+    product_list,
+    product_detail,
+    category_products,
+    all_products
+)
+
+from .views.product_views import (
+    product_list,
+    product_detail,
+    category_products,
+    all_products,
+    new_arrivals,
+    best_sellers,
+    denim_coming_soon
+
+)
 
 
 urlpatterns = [
@@ -64,7 +81,10 @@ urlpatterns = [
     path("product/<slug:slug>/reviews/", product_reviews, name="product_reviews"),
     path("product/<slug:slug>/reviews/load-more/", load_more_reviews, name="load_more_reviews"),
     path("category/<slug:slug>/", category_products, name="category_products"),
+    path("new-arrivals/", new_arrivals, name="new_arrivals"),
+    path("best-sellers/", best_sellers, name="best_sellers"),
     path('products/all/', all_products, name='all_products'),
+    path('denim/',denim_coming_soon, name="denim_coming_soon"),
     # CART
     path("cart/", cart_detail, name="cart"),
     path("cart/add/", add_to_cart, name="add_to_cart"),

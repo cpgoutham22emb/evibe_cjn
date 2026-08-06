@@ -501,27 +501,80 @@
                 </div>
 
             </div>
+        
             <!-- CATEGORY MENU -->
-            <div class="hidden md:flex items-center justify-center gap-20 h-16 border-t border-gray-100 text-[12px] uppercase tracking-[0.2em] font-medium">
+            <div class="hidden md:flex items-center justify-center gap-16 h-16 border-t border-gray-100">
 
-                <a href="/"
-                    class="nav-link hover:opacity-60 transition">
-                    Home
+                <a href="{% url 'new_arrivals' %}"
+                class="nav-link hover:text-black hover:opacity-70 transition">
+                    NEW ARRIVALS
                 </a>
-                           
-                <a href="{% url 'category_products' 'baggy' %}"
-                    class="nav-link">
 
-                    Baggy
-
+                <a href="{% url 'best_sellers' %}"  
+                class="nav-link hover:text-black hover:opacity-70 transition">
+                    BEST SELLERS
                 </a>
-                <a href="{% url 'category_products' 'lenin' %}"
-                    class="nav-link">
 
-                    Lenin
+                <a href="{% url 'denim_coming_soon' %}"
+                class="nav-link hover:text-black hover:opacity-70 transition">
+                    DENIM
+                </a>
 
-                </a>                
+                <div class="relative group">
 
+                    <button
+                        type="button"
+                        class="nav-link flex items-center gap-2 hover:text-black transition">
+
+                        TROUSER &amp; PANT
+
+                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 group-hover:rotate-180"></i>
+
+                    </button>
+
+                    <!-- DROPDOWN -->
+                    <div
+                        class="absolute
+                            left-1/2
+                            -translate-x-1/2
+                            mt-5
+                            w-56
+                            rounded-2xl
+                            border
+                            border-gray-100
+                            bg-white
+                            shadow-2xl
+                            opacity-0
+                            invisible
+                            translate-y-3
+                            group-hover:opacity-100
+                            group-hover:visible
+                            group-hover:translate-y-0
+                            transition-all
+                            duration-300
+                            z-50">
+
+                        <a
+                            href="{% url 'category_products' 'baggy' %}"
+                            class="block px-6 py-4 text-sm uppercase tracking-[0.18em] hover:bg-gray-50 transition">
+
+                            Baggy
+
+                        </a>
+
+                        <hr>
+
+                        <a
+                            href="{% url 'category_products' 'lenin' %}"
+                            class="block px-6 py-4 text-sm uppercase tracking-[0.18em] hover:bg-gray-50 transition">
+
+                            Linen
+
+                        </a>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -559,17 +612,53 @@
 
             <div class="flex flex-col gap-10 px-8 py-12">
 
-                <a href="/" class="text-xl font-semibold tracking-[0.2em]">
-                    Home
+                <a href="{% url 'new_arrivals' %}"
+                class="block py-3 uppercase tracking-[0.18em]">
+                    NEW ARRIVALS
                 </a>
 
-                <a href="{% url 'category_products' 'baggy' %}" class="text-xl font-semibold tracking-[0.2em]">
-                    Baggy
+                <a href="{% url 'best_sellers' %}"
+                class="block py-3 uppercase tracking-[0.18em]">
+                    BEST SELLERS
                 </a>
 
-                <a href="{% url 'category_products' 'lenin' %}" class="text-xl font-semibold tracking-[0.2em]">
-                    Lenin
+                <a href="{% url 'denim_coming_soon' %}"
+                class="block py-3 uppercase tracking-[0.18em]">
+                    DENIM
                 </a>
+
+                <!-- Trouser Dropdown -->
+                <div class="border-b border-gray-100">
+
+                    <button
+                        id="mobileTrouserBtn"
+                        type="button"
+                        class="w-full flex items-center justify-between py-3 uppercase tracking-[0.18em]">
+
+                        <span>TROUSER &amp; PANT</span>
+
+                        <i id="mobileChevron"
+                        class="fa-solid fa-chevron-down transition-transform duration-300"></i>
+
+                    </button>
+
+                    <div
+                        id="mobileTrouserMenu"
+                        class="hidden pl-5 pb-3 space-y-3">
+
+                        <a href="{% url 'category_products' 'baggy' %}"
+                        class="block text-sm text-gray-600 hover:text-black">
+                            Baggy
+                        </a>
+
+                        <a href="{% url 'category_products' 'lenin' %}"
+                        class="block text-sm text-gray-600 hover:text-black">
+                            Linen
+                        </a>
+
+                    </div>
+
+                </div>
 
                 <a href="/cart/"
                 class="flex items-center justify-between
@@ -1601,9 +1690,27 @@
                     duration:1
                 }
             );
-
+            
         </script>
+         
+        <script>
 
+            const mobileTrouserBtn = document.getElementById("mobileTrouserBtn");
+            const mobileTrouserMenu = document.getElementById("mobileTrouserMenu");
+            const mobileChevron = document.getElementById("mobileChevron");
+
+            if (mobileTrouserBtn) {
+
+                mobileTrouserBtn.addEventListener("click", () => {
+
+                    mobileTrouserMenu.classList.toggle("hidden");
+
+                    mobileChevron.classList.toggle("rotate-180");
+
+                });
+
+            }
+        </script>
     </body>
 
 </html>
