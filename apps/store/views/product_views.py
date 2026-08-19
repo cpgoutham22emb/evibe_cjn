@@ -4,6 +4,9 @@ from apps.store.models import Product, Category, ProductVariant, ProductReview, 
 from apps.analytics.models import ProductView
 from django.http import HttpRequest
 
+from pathlib import Path
+import geoip2.database
+
 
 # Helper function to fetch testimonials for the homepage or product pages.
 def get_testimonials():
@@ -54,22 +57,40 @@ def product_list(request):
 # For product detail view, we will also track product views and user city for analytics purposes.
 def get_user_city(request):
     """
-    Basic city detection for now.
-    Later we can improve using IP-based geo lookup.
+    Get the visitor's city using their IP address
+    and the local MaxMind GeoLite2 City database.
     """
 
     forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
 
     if forwarded_for:
-        ip = forwarded_for.split(",")[0]
+        ip = forwarded_for.split(",")[0].strip()
     else:
         ip = request.META.get("REMOTE_ADDR")
 
-    # Localhost testing fallback
-    if ip in ["127.0.0.1", "localhost", None]:
+    # Local development fallback
+    if ip in ["127.0.0.1", "localhost", "::1", None]:
         return "Bangalore"
 
-    # Temporary fallback
+    geoip_db = (
+        Path(__file__).resolve().parents[3]
+        / "data"
+        / "geoip"
+        / "GeoLite2-City.mmdb"
+    )
+
+    try:
+        with geoip2.database.Reader(str(geoip_db)) as reader:
+            response = reader.city(ip)
+
+            city = response.city.name
+
+            if city:
+                return city
+
+    except Exception as e:
+        print(f"GeoIP lookup failed for {ip}: {e}")
+
     return "Unknown"
 
 
