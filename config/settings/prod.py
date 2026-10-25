@@ -6,7 +6,8 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "evibedenim.com",
     "www.evibedenim.com",
-    "187.127.214.212",
+    "201.18.200.24",
+    "127.0.0.1",
 ]
 
 DATABASES = {

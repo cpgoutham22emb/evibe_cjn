@@ -96,12 +96,20 @@ class Command(BaseCommand):
                 else "uncategorized"
             )
 
-            # Universal path:
-            # media/products/<category>/<product_code>/original/
+            # Resolve the actual category folder, preserving its capitalization.
+            products_root = os.path.join(settings.MEDIA_ROOT, "products")
+            category_folder = category_name
+
+            if os.path.isdir(products_root):
+                for folder_name in os.listdir(products_root):
+                    if folder_name.lower() == category_name.lower():
+                        category_folder = folder_name
+                        break
+
+            # media/products/<actual-category-folder>/<product_code>/original/
             original_folder = os.path.join(
-                settings.MEDIA_ROOT,
-                "products",
-                category_name,
+                products_root,
+                category_folder,
                 product.product_code,
                 "original"
             )
@@ -130,7 +138,7 @@ class Command(BaseCommand):
 
                 image_path = os.path.join(
                     "products",
-                    category_name,
+                    category_folder,
                     product.product_code,
                     "original",
                     filename
