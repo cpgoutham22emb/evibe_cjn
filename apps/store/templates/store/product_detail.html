@@ -477,32 +477,35 @@ document.addEventListener("DOMContentLoaded", function(){
 
                     <div class="mt-8">
 
-                        <label class="block mb-3 text-sm uppercase tracking-[0.14em] font-semibold">
+                        <label
+                            for="deliveryPincode"
+                            class="block mb-3 text-sm uppercase tracking-[0.14em] font-semibold">
                             Select Delivery Location
                         </label>
 
                         <div class="flex gap-3">
 
                             <input
+                                id="deliveryPincode"
                                 type="text"
+                                inputmode="numeric"
+                                maxlength="6"
                                 placeholder="Enter PIN Code"
-                                class="flex-1
-                                    border
-                                    rounded-xl
-                                    px-4
-                                    py-3"
+                                class="flex-1 border rounded-xl px-4 py-3"
                             >
 
                             <button
+                                id="checkDeliveryBtn"
                                 type="button"
-                                class="bg-black
-                                    text-white
-                                    px-6
-                                    rounded-xl"
-                            >
+                                class="bg-black text-white px-6 rounded-xl">
                                 Check
                             </button>
 
+                        </div>
+
+                        <div
+                            id="deliveryResult"
+                            class="hidden mt-4 rounded-xl px-4 py-3 text-sm">
                         </div>
 
                     </div>
@@ -569,7 +572,7 @@ document.addEventListener("DOMContentLoaded", function(){
                         Product Description
                     </h3>
 
-                    <p class="text-gray-600 leading-relaxed">
+                    <p class="whitespace-pre-line text-gray-600 leading-relaxed">
                         {{ product.description|default:"Premium quality product designed for comfort and everyday confidence." }}
                     </p>
 
@@ -1265,6 +1268,84 @@ document.getElementById("stickyAddToCart")?.addEventListener("click", function()
     document.getElementById("addToCartForm").requestSubmit();
 
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const pincodeInput =
+        document.getElementById("deliveryPincode");
+
+    const checkButton =
+        document.getElementById("checkDeliveryBtn");
+
+    const result =
+        document.getElementById("deliveryResult");
+
+
+    checkButton.addEventListener("click", async function () {
+
+        const pincode =
+            pincodeInput.value.trim();
+
+
+        // Invalid PIN
+        if (!/^\d{6}$/.test(pincode)) {
+
+            result.className =
+                "mt-4 rounded-xl px-4 py-3 text-sm " +
+                "border border-red-200 bg-red-50 text-red-700";
+
+            result.textContent =
+                "✕ Delivery unavailable";
+
+            return;
+        }
+
+
+        try {
+
+            const response = await fetch(
+                `/ajax/pincode/?pincode=${encodeURIComponent(pincode)}`
+            );
+
+            const data = await response.json();
+
+
+            if (data.success) {
+
+                result.className =
+                    "mt-4 rounded-xl px-4 py-3 text-sm " +
+                    "border border-green-200 bg-green-50 text-green-700";
+
+                result.textContent =
+                    "✓ Delivery available";
+
+            } else {
+
+                result.className =
+                    "mt-4 rounded-xl px-4 py-3 text-sm " +
+                    "border border-red-200 bg-red-50 text-red-700";
+
+                result.textContent =
+                    "✕ Delivery unavailable";
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            result.className =
+                "mt-4 rounded-xl px-4 py-3 text-sm " +
+                "border border-red-200 bg-red-50 text-red-700";
+
+            result.textContent =
+                "✕ Delivery unavailable";
+        }
+
+    });
+
+});
+
 
 </script>
 

@@ -14,7 +14,7 @@ class Command(BaseCommand):
         # ----------------------------
         # 1️⃣ IMPORT PRODUCTS
         # ----------------------------
-        with open('products.csv', newline='', encoding='utf-8') as file:
+        with open('products.csv', newline='', encoding='cp1252') as file:
             reader = csv.DictReader(file)
 
             for row in reader:
@@ -54,7 +54,7 @@ class Command(BaseCommand):
         # ----------------------------
         # 2️⃣ IMPORT VARIANTS
         # ----------------------------
-        with open('variants.csv', newline='', encoding='utf-8') as file:
+        with open('variants.csv', newline='', encoding='cp1252') as file:
             reader = csv.DictReader(file)
 
             for row in reader:
@@ -85,33 +85,56 @@ class Command(BaseCommand):
         # ----------------------------
         # LINK IMAGES
         # ----------------------------
-        products = Product.objects.all()
+        products = Product.objects.select_related("category").all()
 
         for product in products:
 
+            # Category folder
+            category_name = (
+                product.category.name.strip().lower()
+                if product.category
+                else "uncategorized"
+            )
+
+            # Universal path:
+            # media/products/<category>/<product_code>/original/
             original_folder = os.path.join(
                 settings.MEDIA_ROOT,
                 "products",
+                category_name,
                 product.product_code,
                 "original"
             )
 
             if not os.path.exists(original_folder):
+                self.stdout.write(
+                    self.style.WARNING(
+                        f"Image folder not found: {original_folder}"
+                    )
+                )
                 continue
 
             # Remove old image records
             ProductImage.objects.filter(product=product).delete()
 
-            # Read images in a fixed order
+            # Find supported image files
             image_files = sorted(
                 f for f in os.listdir(original_folder)
-                if f.lower().endswith((".jpg", ".jpeg", ".png"))
+                if f.lower().endswith(
+                    (".jpg", ".jpeg", ".png", ".webp")
+                )
             )
 
             # Create ProductImage records
             for filename in image_files:
 
-                image_path = f"products/{product.product_code}/original/{filename}"
+                image_path = os.path.join(
+                    "products",
+                    category_name,
+                    product.product_code,
+                    "original",
+                    filename
+                ).replace("\\", "/")
 
                 ProductImage.objects.create(
                     product=product,
